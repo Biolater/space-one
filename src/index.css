@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer {
+    body {
+        @apply bg-primary font-primary;
+    }
+}
+
+body{
+    height: 199999px;
+}
+
+
+.navbar__toggleButton rect{
+    transition: .3s;
+}
+
+
+.line{
+    display: block;
+    height: 3px;
+    background-color: #fff;
+    width: 30px;
+    transition: .5s;
+}
+
+.right-screenvw{
+    right: -100vw;
+}
+
+.right-start{
+    right: 0;
+}
