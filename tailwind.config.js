@@ -11,7 +11,7 @@ export default {
       },
       fontFamily: {
         'primary': 'Montserrat, sans-serif',
-        'secondary': 'Abril Fatface, sans-serif'
+        'secondary': 'Orbitron, sans-serif'
       }
     },
   },
