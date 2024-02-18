@@ -35,6 +35,7 @@ const Navbar: FC = () => {
           <button
             onClick={handleMobileNavToggle}
             className="navbar__toggleButton lg:hidden flex flex-col gap-2 cursor-pointer"
+            title="Toggle Navigation Menu"
           >
             <HamburgerIcon isClicked={isMobileNavOpen} />
           </button>
@@ -49,24 +50,20 @@ const Navbar: FC = () => {
 
           {/* Mobile Navigation */}
           <ul
-            className={`mobile__navbarNav transition-opacity duration-300 ${
+            className={`mobile__navbarNav container mx-auto transition-opacity duration-300 ${
               isMobileNavOpen
                 ? "opacity-1 pointer-events-auto"
                 : "opacity-0 pointer-events-none"
             } flex-col gap-4 w-full flex left-0 px-4 absolute top-20`}
           >
-            <div className="container mx-auto">
-              <NavbarItem>Home</NavbarItem>
-              <NavbarItem>News</NavbarItem>
-              <NavbarItem>Articles</NavbarItem>
-              <NavbarItem>Forums</NavbarItem>
-              <NavbarItem>About Us</NavbarItem>
-              <NavbarItem>Contact</NavbarItem>
-              <NavbarItem onClick={() => navigate("/login")}>Login</NavbarItem>
-              <NavbarItem onClick={() => navigate("/signup")}>
-                Sign Up
-              </NavbarItem>
-            </div>
+            <NavbarItem>Home</NavbarItem>
+            <NavbarItem>News</NavbarItem>
+            <NavbarItem>Articles</NavbarItem>
+            <NavbarItem>Forums</NavbarItem>
+            <NavbarItem>About Us</NavbarItem>
+            <NavbarItem>Contact</NavbarItem>
+            <NavbarItem onClick={() => navigate("/login")}>Login</NavbarItem>
+            <NavbarItem onClick={() => navigate("/signup")}>Sign Up</NavbarItem>
           </ul>
 
           {/* Desktop Navigation */}
@@ -77,7 +74,6 @@ const Navbar: FC = () => {
             <NavbarItem>Forums</NavbarItem>
             <NavbarItem>About Us</NavbarItem>
             <NavbarItem>Contact</NavbarItem>
-            {/* Add other NavbarItems for desktop */}
           </ul>
 
           {/* Auth Section */}
@@ -87,7 +83,7 @@ const Navbar: FC = () => {
               type="text"
               className="h-8 focus:outline-cyan-600 w-40 px-3 outline-none border-2 rounded border-gray-700 bg-transparent"
               name=""
-              id=""
+              id="search-input"
             />
             <NavbarItem onClick={() => navigate("/login")}>Login</NavbarItem>
             <NavbarItem onClick={() => navigate("/signup")}>Sign Up</NavbarItem>
@@ -98,7 +94,7 @@ const Navbar: FC = () => {
             onClick={handleSearchMenuToggle}
             className="navbar__search lg:hidden flex"
           >
-            <button className="search-icon">
+            <button title="Search for something" className="search-icon">
               <SearchIcon />
             </button>
           </div>
@@ -109,7 +105,7 @@ const Navbar: FC = () => {
               isSearchMenuOpen ? "right-0" : "right-screenvw"
             }`}
           >
-            <button className="search-icon">
+            <button title="Search" className="search-icon">
               <SearchIcon />
             </button>
             <input
@@ -117,9 +113,10 @@ const Navbar: FC = () => {
               placeholder="Explore the Space"
               type="text"
               name=""
-              id=""
+              id="SearchInput"
             />
             <button
+              title="Close Search Menu"
               onClick={handleSearchMenuToggle}
               className="search-icon lg:hidden"
             >
@@ -135,7 +132,7 @@ const Navbar: FC = () => {
 // NavbarItem Component
 interface NavbarItemProps {
   children: ReactNode;
-  onClick?: () => void; // Make onClick optional
+  onClick?: () => void;
 }
 
 const NavbarItem: FC<NavbarItemProps> = ({ children, ...props }) => (
