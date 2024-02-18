@@ -20,6 +20,17 @@ const Navbar: FC = () => {
   };
 
   useEffect(() => {
+    let currentWidth = window.innerWidth;
+    const handleResize = () => {
+      if (currentWidth > 1023) {
+        setIsMobileNavOpen(false);
+      }
+      currentWidth = window.innerWidth;
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+  useEffect(() => {
     document.body.style.overflow = isMobileNavOpen ? "hidden" : "auto";
   }, [isMobileNavOpen]);
 
@@ -50,7 +61,7 @@ const Navbar: FC = () => {
 
           {/* Mobile Navigation */}
           <ul
-            className={`mobile__navbarNav container mx-auto transition-opacity duration-300 ${
+            className={`mobile__navbarNav left-1/2 -translate-x-1/2 container mx-auto transition-opacity duration-300 ${
               isMobileNavOpen
                 ? "opacity-1 pointer-events-auto"
                 : "opacity-0 pointer-events-none"
