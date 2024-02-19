@@ -2,12 +2,32 @@ import { FC, ReactNode, useState, useEffect } from "react";
 // @ts-ignore
 import { HamburgerIcon, SearchIcon, CloseIcon } from "../../utils/Svg";
 import { useNavigate } from "react-router";
+import { onAuthStateChanged } from "firebase/auth";
+// @ts-ignore
+import { auth } from "../../firebase";
 
 // Navbar Component
 const Navbar: FC = () => {
   const navigate = useNavigate();
   const [isMobileNavOpen, setIsMobileNavOpen] = useState<boolean>(false);
   const [isSearchMenuOpen, setIsSearchMenuOpen] = useState<boolean>(false);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false); // New state variable
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setIsLoggedIn(true);
+      } else {
+        setIsLoggedIn(false);
+        if (localStorage.getItem("justLoggedOut") === "true") {
+          alert("You have been logged out");
+          localStorage.removeItem("justLoggedOut");
+        }
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const handleSearchMenuToggle = () => {
     setIsSearchMenuOpen((prev) => !prev);
@@ -17,6 +37,12 @@ const Navbar: FC = () => {
   const handleMobileNavToggle = () => {
     setIsMobileNavOpen((prev) => !prev);
     setIsSearchMenuOpen(false);
+  };
+
+  const handleLogOut = () => {
+    auth.signOut();
+    localStorage.setItem("justLoggedOut", "true");
+    setIsLoggedIn(false);
   };
 
   useEffect(() => {
@@ -73,22 +99,35 @@ const Navbar: FC = () => {
             <NavbarItem onClick={handleMobileNavToggle}>Forums</NavbarItem>
             <NavbarItem onClick={handleMobileNavToggle}>About Us</NavbarItem>
             <NavbarItem onClick={handleMobileNavToggle}>Contact</NavbarItem>
-            <NavbarItem
-              onClick={() => {
-                navigate("/login") 
-                setIsMobileNavOpen(false);
-              }}
-            >
-              Login
-            </NavbarItem>
-            <NavbarItem
-              onClick={() => {
-                navigate("/signup") 
-                setIsMobileNavOpen(false);
-              }}
-            >
-              Sign Up
-            </NavbarItem>
+            {!isLoggedIn ? (
+              <>
+                <NavbarItem
+                  onClick={() => {
+                    navigate("/login");
+                    setIsMobileNavOpen(false);
+                  }}
+                >
+                  Login
+                </NavbarItem>
+                <NavbarItem
+                  onClick={() => {
+                    navigate("/signup");
+                    setIsMobileNavOpen(false);
+                  }}
+                >
+                  Sign Up
+                </NavbarItem>
+              </>
+            ) : (
+              <NavbarItem
+                onClick={() => {
+                  handleLogOut();
+                  setIsMobileNavOpen(false);
+                }}
+              >
+                Logout
+              </NavbarItem>
+            )}
           </ul>
 
           {/* Desktop Navigation */}
@@ -110,8 +149,35 @@ const Navbar: FC = () => {
               name=""
               id="search-input"
             />
-            <NavbarItem onClick={() => navigate("/login")}>Login</NavbarItem>
-            <NavbarItem onClick={() => navigate("/signup")}>Sign Up</NavbarItem>
+            {!isLoggedIn ? (
+              <>
+                <NavbarItem
+                  onClick={() => {
+                    navigate("/login");
+                    setIsMobileNavOpen(false);
+                  }}
+                >
+                  Login
+                </NavbarItem>
+                <NavbarItem
+                  onClick={() => {
+                    navigate("/signup");
+                    setIsMobileNavOpen(false);
+                  }}
+                >
+                  Sign Up
+                </NavbarItem>
+              </>
+            ) : (
+              <NavbarItem
+                onClick={() => {
+                  handleLogOut();
+                  navigate("/login");
+                }}
+              >
+                Logout
+              </NavbarItem>
+            )}
           </div>
 
           {/* Search Icon for Mobile */}
@@ -162,11 +228,13 @@ interface NavbarItemProps {
 
 const NavbarItem: FC<NavbarItemProps> = ({ children, onClick }) => (
   <li className="nav-item py-2 font-primary">
-    <a onClick={onClick} className="nav-link cursor-pointer hover:border-b hover:border-dashed">
+    <a
+      onClick={onClick}
+      className="nav-link cursor-pointer hover:border-b hover:border-dashed"
+    >
       {children}
     </a>
   </li>
 );
-
 
 export default Navbar;
