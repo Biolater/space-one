@@ -68,13 +68,27 @@ const Navbar: FC = () => {
             } flex-col gap-4 w-full flex left-0 px-4 absolute top-20`}
           >
             <NavbarItem>Home</NavbarItem>
-            <NavbarItem>News</NavbarItem>
-            <NavbarItem>Articles</NavbarItem>
-            <NavbarItem>Forums</NavbarItem>
-            <NavbarItem>About Us</NavbarItem>
-            <NavbarItem>Contact</NavbarItem>
-            <NavbarItem onClick={() => navigate("/login")}>Login</NavbarItem>
-            <NavbarItem onClick={() => navigate("/signup")}>Sign Up</NavbarItem>
+            <NavbarItem onClick={handleMobileNavToggle}>News</NavbarItem>
+            <NavbarItem onClick={handleMobileNavToggle}>Articles</NavbarItem>
+            <NavbarItem onClick={handleMobileNavToggle}>Forums</NavbarItem>
+            <NavbarItem onClick={handleMobileNavToggle}>About Us</NavbarItem>
+            <NavbarItem onClick={handleMobileNavToggle}>Contact</NavbarItem>
+            <NavbarItem
+              onClick={() => {
+                navigate("/login") 
+                setIsMobileNavOpen(false);
+              }}
+            >
+              Login
+            </NavbarItem>
+            <NavbarItem
+              onClick={() => {
+                navigate("/signup") 
+                setIsMobileNavOpen(false);
+              }}
+            >
+              Sign Up
+            </NavbarItem>
           </ul>
 
           {/* Desktop Navigation */}
@@ -146,12 +160,13 @@ interface NavbarItemProps {
   onClick?: () => void;
 }
 
-const NavbarItem: FC<NavbarItemProps> = ({ children, ...props }) => (
-  <li {...props} className="nav-item py-2 font-primary">
-    <a href="#" className="nav-link hover:border-b hover:border-dashed">
+const NavbarItem: FC<NavbarItemProps> = ({ children, onClick }) => (
+  <li className="nav-item py-2 font-primary">
+    <a onClick={onClick} className="nav-link cursor-pointer hover:border-b hover:border-dashed">
       {children}
     </a>
   </li>
 );
+
 
 export default Navbar;

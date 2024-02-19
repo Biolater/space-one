@@ -8,9 +8,6 @@
     }
 }
 
-body{
-    height: 199999px;
-}
 
 
 .navbar__toggleButton rect{
@@ -32,4 +29,8 @@ body{
 
 .right-start{
     right: 0;
+}
+
+.login__wrapper{
+    background-color: #fff;
 }
