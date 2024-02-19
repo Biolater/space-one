@@ -43,6 +43,7 @@ const Login = () => {
     e.preventDefault();
     try {
       await signInWithPopup(auth, googleProvider);
+      localStorage.setItem('justLoggedIn', 'true');
       setErrorMessage("");
     } catch (err:any) {
       setErrorMessage(err);
