@@ -11,9 +11,11 @@ const Navbar: FC = () => {
   const navigate = useNavigate();
   const [isMobileNavOpen, setIsMobileNavOpen] = useState<boolean>(false);
   const [isSearchMenuOpen, setIsSearchMenuOpen] = useState<boolean>(false);
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false); // New state variable
-  const [currentUser, setCurrentUser] = useState<string>(""); // New state variable
-  const [currentUserImage, setCurrentUserImage] = useState<string>(""); // New state variable
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  // @ts-ignore
+  const [currentUser, setCurrentUser] = useState<string>(""); 
+  const [currentUserImage, setCurrentUserImage] = useState<string>(""); 
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -30,6 +32,7 @@ const Navbar: FC = () => {
           localStorage.removeItem("justLoggedOut");
         }
       }
+      setIsLoading(false);
     });
 
     return () => unsubscribe();
@@ -90,7 +93,7 @@ const Navbar: FC = () => {
             href="/"
             className="navbar-brand font-semibold tracking-wider font-secondary text-base cursor-pointer"
           >
-            SpaceOne
+            Space<span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-pink-500 to-blue-500">One</span>
           </a>
 
           {/* Desktop Navigation */}
@@ -109,48 +112,53 @@ const Navbar: FC = () => {
               placeholder="Search"
               type="text"
               className="h-8 focus:outline-cyan-600 w-40 px-3 outline-none border-2 rounded border-gray-700 bg-transparent"
-              name=""
               id="search-input"
             />
-            {!isLoggedIn ? (
-              <>
-                <NavbarItem
-                  onClick={() => {
-                    navigate("/login");
-                    setIsMobileNavOpen(false);
-                  }}
-                >
-                  Login
-                </NavbarItem>
-                <NavbarItem
-                  onClick={() => {
-                    navigate("/signup");
-                    setIsMobileNavOpen(false);
-                  }}
-                >
-                  Sign Up
-                </NavbarItem>
-              </>
-            ) : (
-              <>
-                <NavbarItem
-                  onClick={() => {
-                    handleLogOut();
-                    navigate("/login");
-                  }}
-                >
-                  Logout
-                </NavbarItem>
-                <NavbarItem>
-                  <img
-                    className="max-w-12 rounded-full"
-                    src={currentUserImage}
-                    title="View account"
-                    alt="user profile"
-                  />
-                </NavbarItem>
-              </>
-            )}
+            {
+  isLoading ? (
+    <div className="rays flex items-center justify-center"></div>
+  ) : (
+    !isLoggedIn ? (
+      <>
+        <NavbarItem
+          onClick={() => {
+            navigate("/login");
+            setIsMobileNavOpen(false);
+          }}
+        >
+          Login
+        </NavbarItem>
+        <NavbarItem
+          onClick={() => {
+            navigate("/signup");
+            setIsMobileNavOpen(false);
+          }}
+        >
+          Sign Up
+        </NavbarItem>
+      </>
+    ) : (
+      <>
+        <NavbarItem
+          onClick={() => {
+            handleLogOut();
+            navigate("/login");
+          }}
+        >
+          Logout
+        </NavbarItem>
+        <NavbarItem onClick={() => navigate("/dashboard")}>
+          <img
+            className="max-w-12 rounded-full profile-pic relative"
+            src={currentUserImage}
+            title="View account"
+            alt="user profile"
+          />
+        </NavbarItem>
+      </>
+    )
+  )
+}
           </div>
 
           {/* Search Icon for Mobile */}
@@ -232,10 +240,9 @@ const Navbar: FC = () => {
             >
               Logout
             </NavbarItem>
-            <NavbarItem>{currentUser}</NavbarItem>
-            <NavbarItem>
+            <NavbarItem onClick={() => navigate("/dashboard")}>
               <img
-                className="max-w-20 max-h-20 h-full rounded-full"
+                className="max-w-20 max-h-20 h-full rounded-full profil"
                 src={currentUserImage}
                 title="View account"
                 alt="user profile"

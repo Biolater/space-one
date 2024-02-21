@@ -8,18 +8,22 @@ import { auth } from "./firebase";
 const App: React.FC = () => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user && localStorage.getItem('justLoggedIn') === 'true') {
+      if (user && localStorage.getItem("justLoggedIn") === "true") {
         alert("User is logged in");
         // Remove the flag from local storage so the alert won't be shown again
-        localStorage.removeItem('justLoggedIn');
+        localStorage.removeItem("justLoggedIn");
       }
     });
-  
+
     return () => {
       unsubscribe();
     };
   }, [auth]);
-  return <Navbar />;
+  return (
+    <>
+      <Navbar />
+    </>
+  );
 };
 
 export default App;
