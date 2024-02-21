@@ -108,6 +108,7 @@ body{
 #hero{
     background-image: url(./assets/planets.jpeg);
     background-position: center;
+    background-repeat: no-repeat;
     background-size: cover;
     position: relative;
 }

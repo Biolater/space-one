@@ -1,6 +1,6 @@
 const Hero = () => {
   return (
-    <section className="pt-[72px] bg-fixed" id="hero">
+    <section className="pt-[72px]" id="hero">
       <div className="container relative z-10 bg flex flex-col gap-2 justify-center items-center h-[calc(100vh-72px)] mx-auto px-4">
         <h1 className="hero__title text-center text-4xl font-bold  items-center gap-2 text-white">
           Embark on a Cosmic Journey with 
