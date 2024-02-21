@@ -4,6 +4,7 @@ import { Navbar } from "./utils/Components.jsx";
 import { onAuthStateChanged } from "firebase/auth";
 // @ts-ignore
 import { auth } from "./firebase";
+import Hero from "./components/Hero/Hero.js";
 // @ts-ignore
 const App: React.FC = () => {
   useEffect(() => {
@@ -22,6 +23,7 @@ const App: React.FC = () => {
   return (
     <>
       <Navbar />
+      <Hero />
     </>
   );
 };

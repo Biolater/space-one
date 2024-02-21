@@ -71,14 +71,14 @@ const Navbar: FC = () => {
 
   return (
     <header
-      className={`text-white  fixed w-full ${
+      className={`text-white z-50  fixed w-full ${
         !isMobileNavOpen
           ? "overflow-hidden"
           : "max-h-screen overflow-x-hidden overflow-y-auto"
       }`}
     >
-      <nav className="navbar relative">
-        <div className="container flex items-center justify-between mx-auto px-4 py-5">
+      <nav className="navbar bg-primary relative">
+        <div className="container flex items-center justify-between mx-auto px-4 py-5 lg:p-2">
           {/* Mobile Navigation Toggle Button */}
           <button
             onClick={handleMobileNavToggle}
@@ -199,7 +199,7 @@ const Navbar: FC = () => {
       </nav>
       {/* Mobile Navigation */}
       <ul
-        className={`mobile__navbarNav container mx-auto transition-opacity duration-300 ${
+        className={`mobile__navbarNav bg-primary container mx-auto transition-opacity duration-300 ${
           isMobileNavOpen
             ? "opacity-1 pointer-events-auto"
             : "opacity-0 pointer-events-none"
@@ -262,7 +262,7 @@ interface NavbarItemProps {
 }
 
 const NavbarItem: FC<NavbarItemProps> = ({ children, onClick }) => (
-  <li className="nav-item py-2 font-primary">
+  <li className="nav-item py-2 lg:py-0 font-primary">
     <a
       onClick={onClick}
       className={`nav-link border-transparent cursor-pointer hover:border-b hover:border-white hover:border-dashed`}

@@ -1,2 +1,3 @@
 import Navbar from "../components/Navbar/Navbar";
-export { Navbar };
+import Hero from "../components/Hero/Hero";
+export { Navbar, Hero };
