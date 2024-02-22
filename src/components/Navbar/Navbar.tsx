@@ -13,8 +13,8 @@ const Navbar: FC = () => {
   const [isSearchMenuOpen, setIsSearchMenuOpen] = useState<boolean>(false);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   // @ts-ignore
-  const [currentUser, setCurrentUser] = useState<string>(""); 
-  const [currentUserImage, setCurrentUserImage] = useState<string>(""); 
+  const [currentUser, setCurrentUser] = useState<string>("");
+  const [currentUserImage, setCurrentUserImage] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -71,14 +71,14 @@ const Navbar: FC = () => {
 
   return (
     <header
-      className={`text-white z-50  fixed w-full ${
+      className={`text-white z-50  transition-all bg-primary   fixed w-full ${
         !isMobileNavOpen
-          ? "overflow-hidden"
-          : "max-h-screen overflow-x-hidden overflow-y-auto"
+          ? "overflow-hidden h-18"
+          : "max-h-screen h-screen overflow-x-hidden overflow-y-auto"
       }`}
     >
       <nav className="navbar bg-primary relative">
-        <div className="container flex items-center justify-between mx-auto px-4 py-5 lg:p-2">
+        <div className="container h-18 flex items-center justify-between mx-auto px-4 py-5 lg:p-3">
           {/* Mobile Navigation Toggle Button */}
           <button
             onClick={handleMobileNavToggle}
@@ -93,7 +93,10 @@ const Navbar: FC = () => {
             href="/"
             className="navbar-brand font-semibold tracking-wider font-secondary text-base cursor-pointer"
           >
-            Space<span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-pink-500 to-blue-500">One</span>
+            Space
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-pink-500 to-blue-500">
+              One
+            </span>
           </a>
 
           {/* Desktop Navigation */}
@@ -114,51 +117,50 @@ const Navbar: FC = () => {
               className="h-8 focus:outline-cyan-600 w-40 px-3 outline-none border-2 rounded border-gray-700 bg-transparent"
               id="search-input"
             />
-            {
-  isLoading ? (
-    <div className="rays flex items-center justify-center"></div>
-  ) : (
-    !isLoggedIn ? (
-      <>
-        <NavbarItem
-          onClick={() => {
-            navigate("/login");
-            setIsMobileNavOpen(false);
-          }}
-        >
-          Login
-        </NavbarItem>
-        <NavbarItem
-          onClick={() => {
-            navigate("/signup");
-            setIsMobileNavOpen(false);
-          }}
-        >
-          Sign Up
-        </NavbarItem>
-      </>
-    ) : (
-      <>
-        <NavbarItem
-          onClick={() => {
-            handleLogOut();
-            navigate("/login");
-          }}
-        >
-          Logout
-        </NavbarItem>
-        <NavbarItem onClick={() => navigate("/dashboard")}>
-          <img
-            className="max-w-12 rounded-full profile-pic relative"
-            src={currentUserImage}
-            title="View account"
-            alt="user profile"
-          />
-        </NavbarItem>
-      </>
-    )
-  )
-}
+            {isLoading ? (
+              <div className="rays flex items-center justify-center"></div>
+            ) : !isLoggedIn ? (
+              <>
+                <NavbarItem
+                  onClick={() => {
+                    navigate("/login");
+                    setIsMobileNavOpen(false);
+                  }}
+                >
+                  Login
+                </NavbarItem>
+                <NavbarItem
+                  onClick={() => {
+                    navigate("/signup");
+                    setIsMobileNavOpen(false);
+                  }}
+                >
+                  Sign Up
+                </NavbarItem>
+              </>
+            ) : (
+              <>
+                <NavbarItem
+                  onClick={() => {
+                    handleLogOut();
+                    navigate("/login");
+                  }}
+                >
+                  Logout
+                </NavbarItem>
+                <NavbarItem onClick={() => {
+                  navigate("/dashboard");
+                  setIsMobileNavOpen(false);
+                }}>
+                  <img
+                    className="max-w-12 rounded-full profile-pic relative"
+                    src={currentUserImage}
+                    title="View account"
+                    alt="user profile"
+                  />
+                </NavbarItem>
+              </>
+            )}
           </div>
 
           {/* Search Icon for Mobile */}
@@ -199,7 +201,7 @@ const Navbar: FC = () => {
       </nav>
       {/* Mobile Navigation */}
       <ul
-        className={`mobile__navbarNav bg-primary container mx-auto transition-opacity duration-300 ${
+        className={`mobile__navbarNav  py-4 lg:py-0 bg-primary container mx-auto transition-opacity duration-300 ${
           isMobileNavOpen
             ? "opacity-1 pointer-events-auto"
             : "opacity-0 pointer-events-none"
@@ -240,7 +242,10 @@ const Navbar: FC = () => {
             >
               Logout
             </NavbarItem>
-            <NavbarItem onClick={() => navigate("/dashboard")}>
+            <NavbarItem onClick={() => {
+              navigate("/dashboard");
+              setIsMobileNavOpen(false);
+            }}>
               <img
                 className="max-w-20 max-h-20 h-full rounded-full profil"
                 src={currentUserImage}

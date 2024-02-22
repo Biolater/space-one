@@ -521,4 +521,11 @@ const SpaceImage2 = () => {
   );
 };
 
-export { HamburgerIcon, SearchIcon, CloseIcon, SpaceImage, Google, SpaceImage2 };
+export {
+  HamburgerIcon,
+  SearchIcon,
+  CloseIcon,
+  SpaceImage,
+  Google,
+  SpaceImage2,
+};
