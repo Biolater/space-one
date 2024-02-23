@@ -1,10 +1,15 @@
 import SpaceImg from "../../assets/spaceimg.jpg";
-
+import { motion } from "framer-motion"; 
 const About = () => {
   return (
     <section id="about">
       <div className="container px-4 py-16 mx-auto">
-        <h1 className="about__heading text-4xl mb-12 text-white font-semibold text-center">
+        <motion.h1
+        initial={{ opacity: 0, y: 20 }}
+        transition={{ duration: 0.8 }}
+        viewport={{once: true}}
+        whileInView={{ opacity: 1, y: 0 }}
+         className="about__heading text-4xl mb-12 text-white font-semibold text-center">
           About{" "}
           <a
             href="/"
@@ -15,7 +20,7 @@ const About = () => {
               One
             </span>
           </a>
-        </h1>
+        </motion.h1>
         <div className="about__wrapper lg:items-center flex flex-col lg:flex-row gap-5 md:gap-7">
           <div className="left lg:grow basis-1/2">
             <img
