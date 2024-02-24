@@ -22,7 +22,7 @@ const SpaceNews: FC = () => {
         );
 
         const articles: NewsItem[] = response.data.articles;
-
+         
         setNews(articles);
       } catch (error) {
         console.error("Error fetching news:", error);
