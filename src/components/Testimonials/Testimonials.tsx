@@ -110,7 +110,7 @@ export default function Testimonials() {
         >
           {items.map((item, idx) => (
             <SwiperSlide key={idx}>
-              <li className="text-white p-6 pb-10 bg-black rounded-2xl shadow-lg flex flex-col gap-2">
+              <li className="text-white p-6  bg-black rounded-2xl shadow-lg flex flex-col gap-2">
                 <p className="name">{item.name}</p>
                 <p className="title">{item.title}</p>
                 <strong className="quote">{item.quote}</strong>
