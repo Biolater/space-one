@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { FaArrowUp } from "react-icons/fa6";
 // @ts-ignore
 import { Navbar, Hero, About, SpaceNews, Testimonials } from "./utils/Components.jsx";
-import Slider from "./components/Testimonials/Testimonials.js";
 import { onAuthStateChanged } from "firebase/auth";
 // @ts-ignore
 import { auth } from "./firebase";
