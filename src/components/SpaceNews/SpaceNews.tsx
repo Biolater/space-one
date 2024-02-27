@@ -19,7 +19,7 @@ const SpaceNews: FC = () => {
       setLoading(true);
       try {
         const response = await axios.get(
-          `https://gnews.io/api/v4/search?q=space+exploration&lang=en&max=1&apikey=${apiKey}`
+          `https://gnews.io/api/v4/search?q=space+exploration&lang=en&max=5&apikey=${apiKey}`
         );
         const articles: NewsItem[] = response.data.articles;
         setNews(articles);

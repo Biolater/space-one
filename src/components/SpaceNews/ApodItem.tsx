@@ -24,7 +24,7 @@ const ApodItem = ({ date, explanation, title, url }: Apod) => {
     <div className="text-white text-center font-medium text-xl">
       <pre className="mb-2">{date}</pre>
       <p className="mb-4">{title}</p>
-      <embed className="w-full h-96 mb-4" src={url} type="" />
+      <embed className="w-full object-cover rounded-lg shadow-2xl h-96 mb-4" src={url} type="" />
       <p>
         {shortenedVersion.length > 0 && shortenedVersion}
         <br />

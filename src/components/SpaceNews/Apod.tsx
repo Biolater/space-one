@@ -23,9 +23,12 @@ const Apod = () => {
       setNasaApod(response);
     };
     fetchData();
+
+    const intervalId = setInterval(fetchData, 24 * 60 * 60 * 1000);
+    return () => clearInterval(intervalId)
   }, []);
   return (
-    <div className="apod">
+    <div className="apod mt-12">
       <p className="apod__heading text-4xl mb-12 text-white font-semibold text-center">
         Astronomy Picture Of The Day
       </p>
