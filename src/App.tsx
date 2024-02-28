@@ -6,7 +6,6 @@ import { onAuthStateChanged } from "firebase/auth";
 // @ts-ignore
 import { auth } from "./firebase";
 // @ts-ignore
-import { LampDemo } from "./components/ui/lamp.js";
 // @ts-ignore
 const App: React.FC = () => {
   useEffect(() => {
@@ -57,7 +56,6 @@ const App: React.FC = () => {
       </button>
       <Navbar />
       <Hero />
-      <LampDemo />
       <About />
       <Testimonials />
       <SpaceNews />
