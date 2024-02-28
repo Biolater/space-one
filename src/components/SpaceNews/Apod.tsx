@@ -28,7 +28,7 @@ const Apod = () => {
     return () => clearInterval(intervalId)
   }, []);
   return (
-    <div className="apod mt-12">
+    <div className="apod mt-12  lg:max-w-4xl lg:mx-auto">
       <p className="apod__heading text-4xl mb-12 text-white font-semibold text-center">
         Astronomy Picture Of The Day
       </p>

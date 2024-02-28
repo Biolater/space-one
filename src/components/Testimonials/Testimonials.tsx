@@ -99,7 +99,8 @@ export default function Testimonials() {
 
   return (
     <section id="testimonials">
-      <div className="container relative px-4 py-16 flex justify-center mx-auto">
+      <div className="container relative px-4 py-16  justify-center mx-auto">
+      <h1 className="testimonials__heading text-4xl mb-12 text-white font-semibold text-center">Testimonials</h1>
         <Swiper
           pagination={pagination}
           slidesPerView={slidesPerView}
@@ -108,8 +109,8 @@ export default function Testimonials() {
           loop={true}
           className="mySwiper testimonials__slider flex gap-6 static"
         >
-          {items.map((item, idx) => (
-            <SwiperSlide key={idx}>
+          {items.map((item) => (
+            <SwiperSlide key={Math.random() * 1000}>  
               <li className="text-white p-6  bg-black rounded-2xl shadow-lg flex flex-col gap-2">
                 <p className="name">{item.name}</p>
                 <p className="title">{item.title}</p>
