@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { motion } from "framer-motion"; 
 import ApodItem from "./ApodItem";
 import axios from "axios";
 type Apod = {
@@ -29,10 +30,20 @@ const Apod = () => {
   }, []);
   return (
     <div className="apod mt-12  lg:max-w-4xl lg:mx-auto">
-      <p className="apod__heading text-4xl mb-12 text-white font-semibold text-center">
+      <motion.p
+      initial={{ opacity: 0, y:30 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.8 }}
+      whileInView={{ opacity: 1, y: 0 }}
+       className="apod__heading text-4xl mb-12 text-white font-semibold text-center">
         Astronomy Picture Of The Day
-      </p>
-      <aside className="apod__content">
+      </motion.p>
+      <motion.aside 
+      initial={{ opacity: 0, y: 30 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.8, delay: 0.4 }}
+      whileInView={{ opacity: 1, y: 0 }}
+        className="apod__content">
         {nasaApod && (
           <ApodItem
             date={nasaApod?.date}
@@ -41,7 +52,7 @@ const Apod = () => {
             url={nasaApod?.url}
           />
         )}
-      </aside>
+      </motion.aside>
     </div>
   );
 };

@@ -131,6 +131,14 @@ body{
 .swiper-pagination{
     bottom: 5px!important;
 }
+
+.swiper-hide{
+    display: none!important;
+}
+
+.swiper-show{
+    display: block;
+}
   
 
 .swiper-pagination-bullet{
@@ -170,4 +178,15 @@ body{
     .footer__items{
         grid-template-columns: repeat(5,1fr);
     }
+}
+
+
+#footer > .container{
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    border: 2px solid #7777777a;
+    border-radius: 10px;
+}
+
+.profile__photo:hover svg{
+    opacity: 1;
 }

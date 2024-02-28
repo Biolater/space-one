@@ -1,29 +1,74 @@
 "use client";
 import { motion } from "framer-motion";
-import { cn } from "../../utils/cn"
-import {getAuth, onAuthStateChanged, User } from "firebase/auth";
+import { cn } from "../../utils/cn";
+import { getAuth, onAuthStateChanged, User } from "firebase/auth";
+import { FaEdit } from "react-icons/fa";
 import { useEffect, useState } from "react";
+import * as yup from "yup";
+
+
+const schema = yup.object().shape({
+  picture: yup.mixed()
+    .required("You need to provide a picture")
+    .test('fileSize', "The file is too large", (value: any) => {
+      return value && value[0].size <= 1000000; // Access the size property of the file correctly
+    })
+    .test('fileType', "The file is not supported", (value: any) => {
+      return value && ["image/jpeg", "image/png", "image/jpg"].includes(value[0].type);
+    })
+});
 export function BackgroundBeamsDemo() {
+  const handleSubmit  = (e:any) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    schema.validate(formData).then((valid) => {
+      console.log(valid);
+    }).catch((err) => {
+      console.log(err);
+    });
+  }
   const [user, setUser] = useState<User | null>(null);
   useEffect(() => {
     const auth = getAuth();
-    const unsubscribe = onAuthStateChanged(auth,(user) => {
-      if(user){
-        setUser(user)
-      }else{
-        setUser(null)
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUser(user);
+      } else {
+        setUser(null);
       }
-    })
+    });
     return () => unsubscribe();
-  },[])
+  }, []);
   return (
     <div className="h-screen bg-primary relative flex flex-col items-center justify-start antialiased">
-      <div className="max-w-2xl flex flex-col items-center gap-4 mx-auto px-4 py-8">
+      <div className="max-w-2xl z-10 relative flex flex-col items-center gap-4 mx-auto px-4 py-8">
         <h1 className="relative z-10 text-3xl md:text-7xl  bg-clip-text text-transparent bg-gradient-to-b from-neutral-200 to-neutral-600  text-center font-primary font-bold">
           My Profile
         </h1>
-        <img className="rounded-full max-w-24" src={user?.photoURL || "https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png"} alt="" />
-        <p className="text-white text-2xl font-bold">{user && user.displayName}</p>
+        <div className="profile__photo relative">
+          {user && (
+            <form>
+              <FaEdit className="absolute cursor-pointer bottom-0 right-0 text-2xl transition-opacity text-white opacity-0" />
+              <input
+                type="file"
+                className="absolute w-36 h-6 opacity-0  bottom-0 right-0 cursor-pointer"
+                accept="image/*"
+              />
+              <button onClick={(e) => handleSubmit(e) } className="w-20 h-20 bg-red-500" type="submit"></button>
+            </form>
+          )}
+          <img
+            className="rounded-full max-w-24"
+            src={
+              user?.photoURL ||
+              "https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png"
+            }
+            alt="profile photo"
+          />
+        </div>
+        <p className="text-white text-xl font-bold">
+          {user && user.displayName}
+        </p>
       </div>
       <BackgroundBeams />
     </div>

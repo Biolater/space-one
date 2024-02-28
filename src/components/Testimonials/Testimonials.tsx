@@ -2,7 +2,8 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
 import { Pagination } from "swiper/modules";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { motion } from "framer-motion";
 
 interface TestimonialItem {
   quote: string;
@@ -11,6 +12,7 @@ interface TestimonialItem {
 }
 
 export default function Testimonials() {
+  const targetRef = useRef(null);
   const [slidesPerView, setSlidesPerView] = useState(
     window.innerWidth < 768 ? 1 : window.innerWidth < 1024 ? 2 : 3
   );
@@ -90,8 +92,11 @@ export default function Testimonials() {
 
     window.addEventListener("resize", handleResize);
 
-    return () => window.removeEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
   }, []);
+
 
   const pagination = {
     clickable: true,
@@ -100,25 +105,42 @@ export default function Testimonials() {
   return (
     <section id="testimonials">
       <div className="container relative px-4 py-16  justify-center mx-auto">
-      <h1 className="testimonials__heading text-4xl mb-12 text-white font-semibold text-center">Testimonials</h1>
-        <Swiper
-          pagination={pagination}
-          slidesPerView={slidesPerView}
-          modules={[Pagination]}
-          spaceBetween={20}
-          loop={true}
-          className="mySwiper testimonials__slider flex gap-6 static"
+        <motion.h1
+          initial={{ opacity: 0, y: 30 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          className="testimonials__heading text-4xl mb-12 text-white font-semibold text-center"
         >
-          {items.map((item) => (
-            <SwiperSlide key={Math.random() * 1000}>  
-              <li className="text-white p-6  bg-black rounded-2xl shadow-lg flex flex-col gap-2">
-                <p className="name">{item.name}</p>
-                <p className="title">{item.title}</p>
-                <strong className="quote">{item.quote}</strong>
-              </li>
-            </SwiperSlide>
-          ))}
-        </Swiper>
+          Testimonials
+        </motion.h1>
+        <motion.div
+          ref={targetRef}
+          initial={{ opacity: 0}}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          whileInView={{ opacity: 1 }}
+          className="swiper__wrapper"
+        >
+          <Swiper
+            pagination={pagination}
+            slidesPerView={slidesPerView}
+            modules={[Pagination]}
+            spaceBetween={20}
+            loop={true}
+            className="mySwiper testimonials__slider flex gap-6 static"
+          >
+            {items.map((item) => (
+              <SwiperSlide key={Math.random() * 1000}>
+                <li className="text-white p-6  bg-black rounded-2xl shadow-lg flex flex-col gap-2">
+                  <p className="name">{item.name}</p>
+                  <p className="title">{item.title}</p>
+                  <strong className="quote">{item.quote}</strong>
+                </li>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </motion.div>
       </div>
     </section>
   );

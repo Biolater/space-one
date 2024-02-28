@@ -26,7 +26,7 @@ const socials: Social[] = [
 const Footer: FC = () => {
   return (
     <footer id="footer" className="py-16">
-      <div className="container text-white px-4 mx-auto">
+      <div className="container py-3  text-white px-4 mx-auto">
         <a
           href="/"
           className="navbar-brand font-semibold tracking-wider font-secondary text-base cursor-pointer"
