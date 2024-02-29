@@ -1,33 +1,32 @@
-"use client";
+import React, { useEffect, useState } from "react";
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+} from "firebase/storage";
+import { getAuth, onAuthStateChanged, updateProfile } from "firebase/auth";
+import { FaEdit } from "react-icons/fa";
 import { motion } from "framer-motion";
 import { cn } from "../../utils/cn";
-import { getAuth, onAuthStateChanged, User } from "firebase/auth";
-import { FaEdit } from "react-icons/fa";
-import { useEffect, useState } from "react";
-import * as yup from "yup";
+import imageTypes from "../../utils/imageTypes";
+import FailToastMessage from "../Dashboard/FailToastMessage";
 
+type ChangeDetails = {
+  profilePhoto: File | null;
+  displayName: string;
+};
 
-const schema = yup.object().shape({
-  picture: yup.mixed()
-    .required("You need to provide a picture")
-    .test('fileSize', "The file is too large", (value: any) => {
-      return value && value[0].size <= 1000000; // Access the size property of the file correctly
-    })
-    .test('fileType', "The file is not supported", (value: any) => {
-      return value && ["image/jpeg", "image/png", "image/jpg"].includes(value[0].type);
-    })
-});
 export function BackgroundBeamsDemo() {
-  const handleSubmit  = (e:any) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    schema.validate(formData).then((valid) => {
-      console.log(valid);
-    }).catch((err) => {
-      console.log(err);
-    });
-  }
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<any>(null);
+  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
+  const [userNameIsEditing, setUserNameIsEditing] = useState<boolean>(false);
+  const [changeDetails, setChangeDetails] = useState<ChangeDetails>({
+    profilePhoto: null,
+    displayName: "",
+  });
+
   useEffect(() => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -39,26 +38,134 @@ export function BackgroundBeamsDemo() {
     });
     return () => unsubscribe();
   }, []);
+
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      if (imageTypes.includes(e.target.files[0].type)) {
+        setChangeDetails({
+          ...changeDetails,
+          profilePhoto: e.target.files[0],
+        });
+      } else {
+        setError("Please select an image file");
+      }
+    }
+  };
+  const handleDisplayNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setChangeDetails({...changeDetails, displayName: e.target.value})
+  }
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if(changeDetails.displayName.trim().length > 0) {
+      setError("");
+      const auth = getAuth();
+      if (auth.currentUser) {
+        updateProfile(auth.currentUser, {
+          ...user,
+          displayName: changeDetails.displayName,
+        })
+          .then(() => {
+            setMessage("Account updated successfully");
+            setError("Account updated successfully");
+            setUserNameIsEditing(false);
+            setTimeout(() => {
+              setMessage("");
+            }, 2200);
+            // Update the user state
+            setUser({
+              ...user,
+              displayName: changeDetails.displayName,
+            });
+            setChangeDetails({ profilePhoto: null, displayName: "" });
+          })
+          .catch((error) => {
+            setError(error.message);
+          });
+      }
+    }else{
+      setError("Please enter a name")
+    }
+    if (changeDetails.profilePhoto) {
+      setError("");
+      const storage = getStorage();
+      const storageRef = ref(
+        storage,
+        "profilePictures/" + changeDetails.profilePhoto.name
+      );
+      const uploadTask = uploadBytesResumable(
+        storageRef,
+        changeDetails.profilePhoto
+      );
+
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          // Handle the upload progress here if needed
+          var progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          if (progress < 100) {
+            return;
+          } else {
+            setError("Account updated successfully");
+            setMessage("Account updated successfully");
+            setTimeout(() => {
+              setMessage("");
+            }, 2200);
+          }
+        },
+        (error) => {
+          setError(error.message);
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            const auth = getAuth();
+            if (auth.currentUser) {
+              updateProfile(auth.currentUser, {
+                ...user,
+                photoURL: downloadURL,
+              })
+                .then(() => {
+                  console.log("Profile updated");
+                  // Update the user state
+                  setUser({
+                    ...user,
+                    photoURL: downloadURL,
+                  });
+                  setChangeDetails({ profilePhoto: null, displayName: "" });
+                })
+                .catch((error) => {
+                  setError(error.message);
+                });
+            }
+          });
+        }
+      );
+    }
+  };
   return (
     <div className="h-screen bg-primary relative flex flex-col items-center justify-start antialiased">
       <div className="max-w-2xl z-10 relative flex flex-col items-center gap-4 mx-auto px-4 py-8">
+        <FailToastMessage message={error} success={message.length > 0} />
         <h1 className="relative z-10 text-3xl md:text-7xl  bg-clip-text text-transparent bg-gradient-to-b from-neutral-200 to-neutral-600  text-center font-primary font-bold">
           My Profile
         </h1>
         <div className="profile__photo relative">
           {user && (
-            <form>
+            <form
+              className="flex flex-col items-center justify-center"
+              onSubmit={handleSubmit}
+            >
               <FaEdit className="absolute cursor-pointer bottom-0 right-0 text-2xl transition-opacity text-white opacity-0" />
               <input
                 type="file"
                 className="absolute w-36 h-6 opacity-0  bottom-0 right-0 cursor-pointer"
                 accept="image/*"
+                onChange={handleImageSelect}
               />
-              <button onClick={(e) => handleSubmit(e) } className="w-20 h-20 bg-red-500" type="submit"></button>
             </form>
           )}
           <img
-            className="rounded-full max-w-24"
+            className="rounded-full max-w-24 w-24 h-24 object-cover"
             src={
               user?.photoURL ||
               "https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png"
@@ -66,9 +173,47 @@ export function BackgroundBeamsDemo() {
             alt="profile photo"
           />
         </div>
-        <p className="text-white text-xl font-bold">
-          {user && user.displayName}
-        </p>
+        {userNameIsEditing ? (
+          <div className="changeName flex items-center gap-3">
+            <input
+              type="text"
+              id="name"
+              onChange={(e) => handleDisplayNameChange(e)}
+              className="bg-gray-50 border outline-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="Enter your name"
+            ></input>
+            <button
+              onClick={() => {
+                setUserNameIsEditing(false);
+                setChangeDetails({ ...changeDetails, displayName: "" });
+              }}
+              type="button"
+              className="py-2.5 px-5  text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+            >
+              Close
+            </button>
+          </div>
+        ) : (
+          <p className="text-white relative text-xl font-bold">
+            {user && user.displayName}
+            <span
+              onClick={() => setUserNameIsEditing(true)}
+              className="absolute text-base -right-10 top-1/2 -translate-y-1/2 mt-[1px] cursor-pointer text-[#777]"
+            >
+              Edit
+            </span>
+          </p>
+        )}
+
+        {(changeDetails.profilePhoto ||
+          changeDetails.displayName.length > 0) && (
+          <button
+            onClick={(e) => handleSubmit(e)}
+            className="h-12 animate-shimmer items-center justify-center rounded-md border border-slate-800 bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] px-4 font-medium text-slate-400 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50"
+          >
+            Save Changes
+          </button>
+        )}
       </div>
       <BackgroundBeams />
     </div>
