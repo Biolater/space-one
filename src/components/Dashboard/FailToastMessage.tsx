@@ -3,12 +3,14 @@ import { useEffect, useState } from "react";
 type Message = {
   message: string;
   success: boolean;
+  messageName: boolean;
 };
-const FailToastMessage: FC<Message> = ({ message, success }) => {
+const FailToastMessage: FC<Message> = ({ message, success, messageName }) => {
   const [showToast, setShowToast] = useState(false);
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;
     if (message.length > 0) {
+        console.log(message)
       setShowToast(true);
       timeoutId = setTimeout(() => {
         setShowToast(false);
@@ -17,7 +19,7 @@ const FailToastMessage: FC<Message> = ({ message, success }) => {
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [message]);
+  }, [message, messageName]);
   return (
     <div
       id="toast-danger"

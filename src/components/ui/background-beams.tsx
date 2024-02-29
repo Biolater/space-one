@@ -22,6 +22,7 @@ export function BackgroundBeamsDemo() {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [userNameIsEditing, setUserNameIsEditing] = useState<boolean>(false);
+  const [nameFail, setNameFail] = useState(false);
   const [changeDetails, setChangeDetails] = useState<ChangeDetails>({
     profilePhoto: null,
     displayName: "",
@@ -83,7 +84,8 @@ export function BackgroundBeamsDemo() {
           });
       }
     }else{
-      setError("Please enter a name")
+      setError("Please enter a name");
+      setNameFail((prev) => !prev);
     }
     if (changeDetails.profilePhoto) {
       setError("");
@@ -125,7 +127,6 @@ export function BackgroundBeamsDemo() {
                 photoURL: downloadURL,
               })
                 .then(() => {
-                  console.log("Profile updated");
                   // Update the user state
                   setUser({
                     ...user,
@@ -145,7 +146,7 @@ export function BackgroundBeamsDemo() {
   return (
     <div className="h-screen bg-primary relative flex flex-col items-center justify-start antialiased">
       <div className="max-w-2xl z-10 relative flex flex-col items-center gap-4 mx-auto px-4 py-8">
-        <FailToastMessage message={error} success={message.length > 0} />
+        <FailToastMessage message={error} success={message.length > 0}  messageName={nameFail} />
         <h1 className="relative z-10 text-3xl md:text-7xl  bg-clip-text text-transparent bg-gradient-to-b from-neutral-200 to-neutral-600  text-center font-primary font-bold">
           My Profile
         </h1>
