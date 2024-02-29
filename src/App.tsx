@@ -1,12 +1,11 @@
 import { useEffect } from "react";
 import { FaArrowUp } from "react-icons/fa6";
 // @ts-ignore
-import { Navbar, Hero, About, SpaceNews } from "./utils/Components.jsx";
+import { Navbar, Hero, About, SpaceNews, Testimonials, Footer } from "./utils/Components.jsx";
 import { onAuthStateChanged } from "firebase/auth";
 // @ts-ignore
 import { auth } from "./firebase";
 // @ts-ignore
-import { LampDemo } from "./components/ui/lamp.js";
 // @ts-ignore
 const App: React.FC = () => {
   useEffect(() => {
@@ -57,9 +56,10 @@ const App: React.FC = () => {
       </button>
       <Navbar />
       <Hero />
-      <LampDemo />
       <About />
+      <Testimonials />
       <SpaceNews />
+      <Footer />
     </>
   );
 };

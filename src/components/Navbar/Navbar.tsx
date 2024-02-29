@@ -153,7 +153,7 @@ const Navbar: FC = () => {
                   setIsMobileNavOpen(false);
                 }}>
                   <img
-                    className="max-w-12 rounded-full profile-pic relative"
+                    className="w-12 h-12 object-cover rounded-full profile-pic relative"
                     src={currentUserImage}
                     title="View account"
                     alt="user profile"
@@ -247,7 +247,7 @@ const Navbar: FC = () => {
               setIsMobileNavOpen(false);
             }}>
               <img
-                className="max-w-20 max-h-20 h-full rounded-full profil"
+                className="w-20 h-20  object-cover rounded-full profile"
                 src={currentUserImage}
                 title="View account"
                 alt="user profile"

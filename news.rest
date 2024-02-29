@@ -1,1 +1,2 @@
-https://gnews.io/api/v4/search?q=space+exploration&lang=en&max=5&apikey=e05e35d96279af5c8761477eee97f43b
+GET https://api.nasa.gov/planetary/apod?api_key=WI7aonMPGTnDLh2FfCSCzqovqhfXV8XRcHAU8nUV
+
