@@ -53,11 +53,11 @@ export function BackgroundBeamsDemo() {
     }
   };
   const handleDisplayNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setChangeDetails({...changeDetails, displayName: e.target.value})
-  }
+    setChangeDetails({ ...changeDetails, displayName: e.target.value });
+  };
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if(changeDetails.displayName.trim().length > 0) {
+    if (changeDetails.displayName.trim().length > 0) {
       setError("");
       const auth = getAuth();
       if (auth.currentUser) {
@@ -83,7 +83,7 @@ export function BackgroundBeamsDemo() {
             setError(error.message);
           });
       }
-    }else{
+    } else {
       setError("Please enter a name");
       setNameFail((prev) => !prev);
     }
@@ -146,7 +146,11 @@ export function BackgroundBeamsDemo() {
   return (
     <div className="h-screen bg-primary relative flex flex-col items-center justify-start antialiased">
       <div className="max-w-2xl z-10 relative flex flex-col items-center gap-4 mx-auto px-4 py-8">
-        <FailToastMessage message={error} success={message.length > 0}  messageName={nameFail} />
+        <FailToastMessage
+          message={error}
+          success={message.length > 0}
+          messageName={nameFail}
+        />
         <h1 className="relative z-10 text-3xl md:text-7xl  bg-clip-text text-transparent bg-gradient-to-b from-neutral-200 to-neutral-600  text-center font-primary font-bold">
           My Profile
         </h1>

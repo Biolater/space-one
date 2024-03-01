@@ -10,7 +10,7 @@ const FailToastMessage: FC<Message> = ({ message, success, messageName }) => {
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;
     if (message.length > 0) {
-        console.log(message)
+      console.log(message);
       setShowToast(true);
       timeoutId = setTimeout(() => {
         setShowToast(false);
