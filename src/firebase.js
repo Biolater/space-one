@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth"
-import { collection, getFirestore, getDocs } from "firebase/firestore"
+import { collection, doc, getFirestore, setDoc } from "firebase/firestore"
 const firebaseConfig = {
   apiKey: "AIzaSyAhhs2Iz-wF20KBmF27U41kHmJaM9VO2h0",
   authDomain: "space-one-15043.firebaseapp.com",
@@ -16,6 +16,3 @@ export const db = getFirestore(app);
 export const colRef = collection(db, 'users');
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
-getDocs(colRef).then((querySnapshot) => {
-  console.log(querySnapshot.docs)
-})

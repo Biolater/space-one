@@ -1,3 +1,4 @@
+// Import the necessary functions and types
 import React, { useEffect, useState } from "react";
 import {
   getStorage,
@@ -6,8 +7,14 @@ import {
   getDownloadURL,
 } from "firebase/storage";
 import { getAuth, onAuthStateChanged, updateProfile } from "firebase/auth";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+
+// Import the Firebase app, auth, and db
+// @ts-ignore
+import { auth, db, colRef } from "../../firebase";
 import { FaEdit } from "react-icons/fa";
 import { motion } from "framer-motion";
+
 import { cn } from "../../utils/cn";
 import imageTypes from "../../utils/imageTypes";
 import FailToastMessage from "../Dashboard/FailToastMessage";
@@ -15,6 +22,7 @@ import FailToastMessage from "../Dashboard/FailToastMessage";
 type ChangeDetails = {
   profilePhoto: File | null;
   displayName: string;
+  bio: string;
 };
 
 export function BackgroundBeamsDemo() {
@@ -22,10 +30,15 @@ export function BackgroundBeamsDemo() {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [userNameIsEditing, setUserNameIsEditing] = useState<boolean>(false);
-  const [nameFail, setNameFail] = useState(false);
+  const [bioIsEditing, setBioIsEditing] = useState<boolean>(false);
+  const [nameFail, setNameFail] = useState<boolean>(false);
+  const [bioFail, setBioFail] = useState<boolean>(false);
+  const [bio, setBio] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(true);
   const [changeDetails, setChangeDetails] = useState<ChangeDetails>({
     profilePhoto: null,
     displayName: "",
+    bio: "",
   });
 
   useEffect(() => {
@@ -52,32 +65,54 @@ export function BackgroundBeamsDemo() {
       }
     }
   };
+
   const handleDisplayNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setChangeDetails({ ...changeDetails, displayName: e.target.value });
+    setChangeDetails({
+      ...changeDetails,
+      displayName: e.target.value,
+    });
   };
-  const handleSubmit = (e: React.FormEvent) => {
+
+  const handleBioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setChangeDetails({ ...changeDetails, bio: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (changeDetails.displayName.trim().length > 0) {
       setError("");
       const auth = getAuth();
       if (auth.currentUser) {
+        try{
+          const userDocRef = doc(db, 'users', user?.uid);
+          await updateDoc(userDocRef, {
+            name: changeDetails.displayName,
+          })
+        }catch(err:any){
+          setError(err.message);
+        }
         updateProfile(auth.currentUser, {
           ...user,
           displayName: changeDetails.displayName,
         })
+        
           .then(() => {
+            setUserNameIsEditing(false);
             setMessage("Account updated successfully");
             setError("Account updated successfully");
-            setUserNameIsEditing(false);
             setTimeout(() => {
               setMessage("");
             }, 2200);
-            // Update the user state
             setUser({
               ...user,
               displayName: changeDetails.displayName,
             });
-            setChangeDetails({ profilePhoto: null, displayName: "" });
+            setChangeDetails({
+              profilePhoto: null,
+              displayName: "",
+              bio: "",
+            });
           })
           .catch((error) => {
             setError(error.message);
@@ -88,6 +123,7 @@ export function BackgroundBeamsDemo() {
       setNameFail((prev) => !prev);
     }
     if (changeDetails.profilePhoto) {
+      setLoading(true);
       setError("");
       const storage = getStorage();
       const storageRef = ref(
@@ -102,18 +138,9 @@ export function BackgroundBeamsDemo() {
       uploadTask.on(
         "state_changed",
         (snapshot) => {
-          // Handle the upload progress here if needed
-          var progress =
+          const progress =
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          if (progress < 100) {
-            return;
-          } else {
-            setError("Account updated successfully");
-            setMessage("Account updated successfully");
-            setTimeout(() => {
-              setMessage("");
-            }, 2200);
-          }
+          console.log("Upload is " + progress + "% done");
         },
         (error) => {
           setError(error.message);
@@ -127,12 +154,18 @@ export function BackgroundBeamsDemo() {
                 photoURL: downloadURL,
               })
                 .then(() => {
-                  // Update the user state
+                  setMessage("Account updated successfully");
+                  setError("Account updated successfully");
+                  setLoading(false);
                   setUser({
                     ...user,
                     photoURL: downloadURL,
                   });
-                  setChangeDetails({ profilePhoto: null, displayName: "" });
+                  setChangeDetails({
+                    profilePhoto: null,
+                    displayName: "",
+                    bio: "",
+                  });
                 })
                 .catch((error) => {
                   setError(error.message);
@@ -143,84 +176,200 @@ export function BackgroundBeamsDemo() {
       );
     }
   };
-  return (
-    <div className="h-screen bg-primary relative flex flex-col items-center justify-start antialiased">
-      <div className="max-w-2xl z-10 relative flex flex-col items-center gap-4 mx-auto px-4 py-8">
-        <FailToastMessage
-          message={error}
-          success={message.length > 0}
-          messageName={nameFail}
-        />
-        <h1 className="relative z-10 text-3xl md:text-7xl  bg-clip-text text-transparent bg-gradient-to-b from-neutral-200 to-neutral-600  text-center font-primary font-bold">
-          My Profile
-        </h1>
-        <div className="profile__photo relative">
-          {user && (
-            <form
-              className="flex flex-col items-center justify-center"
-              onSubmit={handleSubmit}
-            >
-              <FaEdit className="absolute cursor-pointer bottom-0 right-0 text-2xl transition-opacity text-white opacity-0" />
-              <input
-                type="file"
-                className="absolute w-36 h-6 opacity-0  bottom-0 right-0 cursor-pointer"
-                accept="image/*"
-                onChange={handleImageSelect}
-              />
-            </form>
-          )}
-          <img
-            className="rounded-full max-w-24 w-24 h-24 object-cover"
-            src={
-              user?.photoURL ||
-              "https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png"
-            }
-            alt="profile photo"
-          />
-        </div>
-        {userNameIsEditing ? (
-          <div className="changeName flex items-center gap-3">
-            <input
-              type="text"
-              id="name"
-              onChange={(e) => handleDisplayNameChange(e)}
-              className="bg-gray-50 border outline-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Enter your name"
-            ></input>
-            <button
-              onClick={() => {
-                setUserNameIsEditing(false);
-                setChangeDetails({ ...changeDetails, displayName: "" });
-              }}
-              type="button"
-              className="py-2.5 px-5  text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-            >
-              Close
-            </button>
-          </div>
-        ) : (
-          <p className="text-white relative text-xl font-bold">
-            {user && user.displayName}
-            <span
-              onClick={() => setUserNameIsEditing(true)}
-              className="absolute text-base -right-10 top-1/2 -translate-y-1/2 mt-[1px] cursor-pointer text-[#777]"
-            >
-              Edit
-            </span>
-          </p>
-        )}
 
-        {(changeDetails.profilePhoto ||
-          changeDetails.displayName.length > 0) && (
-          <button
-            onClick={(e) => handleSubmit(e)}
-            className="h-12 animate-shimmer items-center justify-center rounded-md border border-slate-800 bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] px-4 font-medium text-slate-400 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50"
-          >
-            Save Changes
-          </button>
-        )}
-      </div>
-      <BackgroundBeams />
+  const handleBioSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (changeDetails.bio.trim().length < 1) {
+      setError("Please enter a bio");
+      setBioFail((prev) => !prev);
+    }else{
+      const userDocRef = doc(db, "users", user?.uid);
+      try {
+        await updateDoc(userDocRef, {
+          bio: changeDetails.bio,
+        });
+        setBio(changeDetails.bio);
+        setMessage("Bio updated successfully");
+        setError("Bio updated successfully");
+        setBioIsEditing(false);
+        setChangeDetails({
+          ...changeDetails,
+          bio: "",
+        });
+      } catch (error) {
+        console.error("Error updating bio:", error);
+        setError("Error updating bio."); // Set error state
+      }
+    }
+  };
+
+
+  const fetchBio = async () => {
+    const userDocRef = doc(db, "users", user?.uid);
+    try {
+      const docSnap = await getDoc(userDocRef);
+      if (docSnap.exists()) {
+        return docSnap.data().bio;
+      } else {
+        return "bio does not exist";
+      }
+    } catch (error) {
+      console.error("Error fetching bio:", error);
+    }
+  };
+
+  useEffect(() => {
+    const getBio = async () => {
+      if (user) {
+        try {
+          const bio = await fetchBio();
+          setBio(bio);
+        } catch (error) {
+          console.error("Error fetching bio:", error);
+          setError("Error fetching bio."); // Set error state
+        } finally {
+          setLoading(false); // Stop loading state regardless
+        }
+      }
+    };
+
+    getBio();
+  }, [user]);
+
+  return (
+    <div>
+      {loading && (
+        <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 z-50 flex justify-center items-center">
+          <div className="rays flex items-center justify-center"></div>
+        </div>
+      )}
+      {!loading && (
+        <div className="h-screen bg-primary relative flex flex-col items-center justify-start antialiased">
+          <div className="max-w-2xl z-10 relative flex flex-col items-center gap-4 mx-auto px-4 py-8">
+            <FailToastMessage
+              message={error}
+              success={message.length > 0}
+              messageName={nameFail}
+              bioAlert={bioFail}
+            />
+            <h1 className="relative z-10 text-3xl md:text-7xl  bg-clip-text text-transparent bg-gradient-to-b from-neutral-200 to-neutral-600  text-center font-primary font-bold">
+              My Profile
+            </h1>
+            <div className="profile__photo relative">
+              {user && (
+                <form
+                  className="flex flex-col items-center justify-center"
+                  onSubmit={handleSubmit}
+                >
+                  <FaEdit className="absolute cursor-pointer bottom-0 right-0 text-2xl transition-opacity text-white opacity-0" />
+                  <input
+                    type="file"
+                    className="absolute w-36 h-6 opacity-0  bottom-0 right-0 cursor-pointer"
+                    accept="image/*"
+                    onChange={handleImageSelect}
+                  />
+                </form>
+              )}
+              <img
+                className="rounded-full max-w-24 w-24 h-24 object-cover"
+                src={
+                  user?.photoURL ||
+                  "https://cdn.pixabay.com/photo/2012/04/26/19/43/profile-42914_1280.png"
+                }
+                alt="profile photo"
+              />
+            </div>
+            {userNameIsEditing ? (
+              <div className="changeName flex items-center gap-3">
+                <input
+                  type="text"
+                  id="name"
+                  onChange={(e) => handleDisplayNameChange(e)}
+                  className="bg-gray-50 border outline-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder="Enter your name"
+                ></input>
+                <button
+                  onClick={() => {
+                    setUserNameIsEditing(false);
+                    setChangeDetails({
+                      ...changeDetails,
+                      displayName: "",
+                    });
+                  }}
+                  type="button"
+                  className="py-2.5 px-5  text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                >
+                  Close
+                </button>
+              </div>
+            ) : (
+              <p className="text-white relative text-xl font-bold">
+                {user && user.displayName}
+                <span
+                  onClick={() => setUserNameIsEditing(true)}
+                  className="absolute text-base -right-10 top-1/2 -translate-y-1/2 mt-[1px] cursor-pointer text-[#777]"
+                >
+                  Edit
+                </span>
+              </p>
+            )}
+            {bioIsEditing ? (
+              <div className="changeBio flex items-center gap-3">
+                <input
+                  type="text"
+                  id="name"
+                  onChange={(e) => handleBioChange(e)}
+                  className="bg-gray-50 border outline-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder="Enter your bio"
+                ></input>
+                {changeDetails.bio.length > 0 && (
+                  <button
+                    onClick={(e) => handleBioSubmit(e)}
+                    type="button"
+                    className="py-2.5 px-5  text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                  >
+                    Save
+                  </button>
+                )}
+                <button
+                  onClick={() => {
+                    setBioIsEditing(false);
+                    setChangeDetails({
+                      ...changeDetails,
+                      bio: "",
+                    });
+                  }}
+                  type="button"
+                  className="py-2.5 px-5  text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                >
+                  Close
+                </button>
+              </div>
+            ) : (
+              <p className="text-white relative text-xl font-bold">
+                {user && bio}
+                <span
+                  onClick={() => setBioIsEditing(true)}
+                  className="absolute text-base -right-10 top-1/2 -translate-y-1/2 mt-[1px] cursor-pointer text-[#777]"
+                >
+                  Edit
+                </span>
+              </p>
+            )}
+
+            {(changeDetails.profilePhoto ||
+              changeDetails.displayName.length > 0) && (
+              <button
+                onClick={(e) => handleSubmit(e)}
+                className="h-12 animate-shimmer items-center justify-center rounded-md border border-slate-800 bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] px-4 font-medium text-slate-400 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50"
+              >
+                Save Changes
+              </button>
+            )}
+          </div>
+          <BackgroundBeams />
+        </div>
+      )}
     </div>
   );
 }

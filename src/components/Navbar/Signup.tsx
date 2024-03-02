@@ -1,7 +1,8 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 // @ts-ignore
-import { auth } from "../../firebase";
+import { auth, colRef } from "../../firebase";
+// @ts-ignore
 import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
@@ -9,22 +10,23 @@ import {
 } from "firebase/auth";
 // @ts-ignore
 import { SpaceImage2 } from "../../utils/Svg.jsx";
-
+import { setDoc, doc } from "firebase/firestore";
 const SignUp = () => {
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   useEffect(() => {
     document.body.style.overflow = "auto";
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         navigate("/");
-        if (localStorage.getItem('justLoggedIn') !== 'true') {
+        if (localStorage.getItem("justLoggedIn") !== "true") {
           localStorage.setItem("justLoggedIn", "true");
         }
       } else {
         navigate("/signup");
       }
     });
-  
+
     return () => unsubscribe();
   }, []);
   const [user, setUser] = useState({
@@ -37,6 +39,7 @@ const SignUp = () => {
 
   const signUp = async (e: any) => {
     e.preventDefault();
+    setLoading(true);
     if (user.password !== user.confirmPassword) {
       setErrorMessage("Passwords do not match");
       return;
@@ -47,13 +50,21 @@ const SignUp = () => {
         user.email,
         user.password
       );
-    
-      await updateProfile(userCredential.user, { displayName: user.name })
-    
+      await setDoc(doc(colRef, userCredential.user.uid), {
+        email: user.email,
+        name: user.name,
+        userPassword: user.password,
+        uid: userCredential.user.uid,
+        bio: "Default bio",
+      });
+      await updateProfile(userCredential.user, { displayName: user.name });
+
       setErrorMessage("");
       navigate("/");
     } catch (err: any) {
       setErrorMessage(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -159,6 +170,11 @@ const SignUp = () => {
           </form>
         </div>
       </div>
+      {loading && (
+        <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 z-50 flex justify-center items-center">
+          <div className="rays flex items-center justify-center"></div>
+        </div>
+      )}
     </div>
   );
 };

@@ -5,7 +5,6 @@ import { auth, googleProvider } from "../../firebase";
 import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
-  signInWithPopup,
 } from "firebase/auth";
 // @ts-ignore
 import { SpaceImage, Google, SpaceImage2 } from "../../utils/Svg.jsx";
@@ -25,6 +24,7 @@ const Login = () => {
     };
   }, []);
 
+
   const [user, setUser] = useState({
     email: "",
     password: "",
@@ -39,17 +39,6 @@ const Login = () => {
       setErrorMessage("");
     } catch (err: any) {
       setErrorMessage(err.message);
-    }
-  };
-
-  const signInWithGoogle = async (e: any) => {
-    e.preventDefault();
-    try {
-      await signInWithPopup(auth, googleProvider);
-      localStorage.setItem("justLoggedIn", "true");
-      setErrorMessage("");
-    } catch (err: any) {
-      setErrorMessage(err);
     }
   };
 
@@ -82,7 +71,7 @@ const Login = () => {
           >
             <div className="form__item flex flex-col gap-2 ">
               <label className="font-medium" htmlFor="email">
-                Email *
+                Email
               </label>
               <input
                 value={user.email}
@@ -96,7 +85,7 @@ const Login = () => {
             </div>
             <div className="form__item flex flex-col gap-2 ">
               <label className="font-medium" htmlFor="password">
-                Password *
+                Password
               </label>
               <input
                 value={user.password}
@@ -122,14 +111,7 @@ const Login = () => {
               </button>
             </div>
           </form>
-          <p>or</p>
-          <button
-            onClick={(e) => signInWithGoogle(e)}
-            className="placeholder:text-[#777] flex items-center justify-center gap-3 px-4 py-2 rounded-lg border-2 border-[#D9D9D9] focus:outline-blue-700 w-full font-medium"
-            title="Login with Google"
-          >
-            <span className="max-w-6">{<Google />}</span>Login with Google
-          </button>
+
         </div>
       </div>
     </div>

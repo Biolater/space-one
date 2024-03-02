@@ -12,7 +12,6 @@ const App: React.FC = () => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user && localStorage.getItem("justLoggedIn") === "true") {
         alert("User is logged in");
-        // Remove the flag from local storage so the alert won't be shown again
         localStorage.removeItem("justLoggedIn");
       }
     });
