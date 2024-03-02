@@ -190,3 +190,11 @@ body{
 .profile__photo:hover svg{
     opacity: 1;
 }
+
+.MuiSkeleton-text{
+    background-color: #ffffff62!important;
+}
+
+.MuiSkeleton-text::after{
+    background:linear-gradient(90deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.2))!important; 
+}

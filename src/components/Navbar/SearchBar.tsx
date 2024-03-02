@@ -1,0 +1,98 @@
+import axios from "axios";
+//@ts-ignore
+import { SearchIcon, CloseIcon } from "../../utils/Svg";
+import { useState, useEffect } from "react";
+import SearchBarSuggestions from "./SearchBarSuggestions";
+type MobileSearchBarProps = {
+  isSearchMenuOpen: boolean;
+  handleSearchMenuToggle: () => void;
+};
+
+const SearchBar = () => {
+  return (
+    <input
+      placeholder="Search"
+      type="text"
+      className="h-8 focus:outline-cyan-600 w-40 px-3 outline-none border-2 rounded border-gray-700 bg-transparent"
+      id="search-input"
+    />
+  );
+};
+
+const MobileSearchBar = ({
+  isSearchMenuOpen,
+  handleSearchMenuToggle,
+}: MobileSearchBarProps) => {
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [suggestions, setSuggestions] = useState<object[]>([]);
+  const [noResult, setNoResult] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  useEffect(() => {
+    setNoResult(false);
+    let timeOut: NodeJS.Timeout;
+    const endPoint = `https://images-api.nasa.gov/search?q=${searchTerm}`;
+    const fetchData = async () => {
+      try {
+        const response = await (
+          await axios.get(endPoint)
+        ).data.collection.items;
+        setSuggestions(response.slice(0, 5));
+        if (response.length === 0) {
+          setNoResult(true);
+        } else {
+          setNoResult(false);
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    if (searchTerm.length > 0) {
+      setLoading(true);
+      timeOut = setTimeout(async () => {
+        await fetchData();
+      }, 500);
+    } else {
+      setSuggestions([]);
+      setNoResult(false);
+      setLoading(false);
+    }
+    return () => clearTimeout(timeOut);
+  }, [searchTerm]);
+  return (
+    <>
+      <div
+        className={`search__menu lg:hidden absolute gap-4 duration-500 flex items-center px-4 py-5 bg-primary w-full transition-all ${
+          isSearchMenuOpen ? "right-0" : "right-screenvw"
+        }`}
+      >
+        <button title="Search" className="search-icon">
+          <SearchIcon />
+        </button>
+        <input
+          className="w-full bg-transparent focus:outline-cyan-600 outline-none"
+          placeholder="Explore the Space"
+          type="text"
+          name="search"
+          onChange={(e) => setSearchTerm(e.target.value)}
+          id="SearchInput"
+        />
+        <button
+          title="Close Search Menu"
+          onClick={handleSearchMenuToggle}
+          className="search-icon lg:hidden"
+        >
+          <CloseIcon />
+        </button>
+      </div>
+      <SearchBarSuggestions
+        loading={loading}
+        noResult={noResult}
+        suggestions={suggestions}
+      />
+    </>
+  );
+};
+
+export { SearchBar, MobileSearchBar };

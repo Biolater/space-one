@@ -1,4 +1,5 @@
 import { FC, ReactNode, useState, useEffect } from "react";
+import { SearchBar, MobileSearchBar } from "./SearchBar";
 // @ts-ignore
 import { HamburgerIcon, SearchIcon, CloseIcon } from "../../utils/Svg";
 import { useNavigate } from "react-router";
@@ -71,7 +72,7 @@ const Navbar: FC = () => {
 
   return (
     <header
-      className={`text-white z-50  transition-all bg-primary   fixed w-full ${
+      className={`text-white z-50 ${isSearchMenuOpen && "max-h-screen h-screen overflow-x-hidden overflow-y-auto"}  transition-all bg-primary   fixed w-full ${
         !isMobileNavOpen
           ? "overflow-hidden h-18"
           : "max-h-screen h-screen overflow-x-hidden overflow-y-auto"
@@ -111,12 +112,7 @@ const Navbar: FC = () => {
 
           {/* Auth Section */}
           <div className="navbar__auth hidden lg:flex items-center list-none gap-3">
-            <input
-              placeholder="Search"
-              type="text"
-              className="h-8 focus:outline-cyan-600 w-40 px-3 outline-none border-2 rounded border-gray-700 bg-transparent"
-              id="search-input"
-            />
+            <SearchBar />
             {isLoading ? (
               <div className="rays flex items-center justify-center"></div>
             ) : !isLoggedIn ? (
@@ -174,29 +170,7 @@ const Navbar: FC = () => {
           </div>
 
           {/* Search Menu for Mobile */}
-          <div
-            className={`search__menu lg:hidden absolute gap-4 duration-500 flex items-center px-4 py-5 bg-primary w-full transition-all ${
-              isSearchMenuOpen ? "right-0" : "right-screenvw"
-            }`}
-          >
-            <button title="Search" className="search-icon">
-              <SearchIcon />
-            </button>
-            <input
-              className="w-full bg-transparent focus:outline-cyan-600 outline-none"
-              placeholder="Explore the Space"
-              type="text"
-              name=""
-              id="SearchInput"
-            />
-            <button
-              title="Close Search Menu"
-              onClick={handleSearchMenuToggle}
-              className="search-icon lg:hidden"
-            >
-              <CloseIcon />
-            </button>
-          </div>
+          <MobileSearchBar isSearchMenuOpen={isSearchMenuOpen} handleSearchMenuToggle={handleSearchMenuToggle} />
         </div>
       </nav>
       {/* Mobile Navigation */}
