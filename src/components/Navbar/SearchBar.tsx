@@ -73,6 +73,7 @@ const MobileSearchBar = ({
         <input
           className="w-full bg-transparent focus:outline-cyan-600 outline-none"
           placeholder="Explore the Space"
+          value={searchTerm}
           type="text"
           name="search"
           onChange={(e) => setSearchTerm(e.target.value)}
@@ -80,7 +81,10 @@ const MobileSearchBar = ({
         />
         <button
           title="Close Search Menu"
-          onClick={handleSearchMenuToggle}
+          onClick={() => {
+            handleSearchMenuToggle();
+            setSearchTerm("");
+          }}
           className="search-icon lg:hidden"
         >
           <CloseIcon />
