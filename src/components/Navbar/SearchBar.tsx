@@ -3,19 +3,25 @@ import axios from "axios";
 import { SearchIcon, CloseIcon } from "../../utils/Svg";
 import { useState, useEffect } from "react";
 import SearchBarSuggestions from "./SearchBarSuggestions";
+import PcMobileSearchBarSuggestions from "./PcMobileSearchBarSuggestions";
+import { createPortal } from "react-dom";
 type MobileSearchBarProps = {
   isSearchMenuOpen: boolean;
   handleSearchMenuToggle: () => void;
 };
 
 const SearchBar = () => {
+  const rootContainer = document.getElementById("root") as HTMLDivElement;
   return (
-    <input
-      placeholder="Search"
-      type="text"
-      className="h-8 focus:outline-cyan-600 w-40 px-3 outline-none border-2 rounded border-gray-700 bg-transparent"
-      id="search-input"
-    />
+    <>
+      <input
+        placeholder="Search"
+        type="text"
+        className="h-8 focus:outline-cyan-600 w-40 px-3 outline-none border-2 rounded border-gray-700 bg-transparent"
+        id="search-input"
+      />
+      {createPortal(<PcMobileSearchBarSuggestions />, rootContainer)}
+    </>
   );
 };
 

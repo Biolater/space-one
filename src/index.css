@@ -199,3 +199,7 @@ body{
     background:linear-gradient(90deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.2))!important; 
 }
 
+
+.search__results{
+    transition: all .3s;
+}
