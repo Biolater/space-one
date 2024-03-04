@@ -27,8 +27,8 @@ const MobileSearchBar = ({
   const [suggestions, setSuggestions] = useState<object[]>([]);
   const [noResult, setNoResult] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  //@ts-ignore
   const [sliceCount, setSliceCount] = useState<number>(5);
+  //@ts-ignore
   useEffect(() => {
     setNoResult(false);
     let timeOut: NodeJS.Timeout;
@@ -38,7 +38,7 @@ const MobileSearchBar = ({
         const response = await (
           await axios.get(endPoint)
         ).data.collection.items;
-        setSuggestions(response.slice(0, sliceCount));
+        setSuggestions(response);
         if (response.length === 0) {
           setNoResult(true);
         } else {
@@ -78,7 +78,10 @@ const MobileSearchBar = ({
           value={searchTerm}
           type="text"
           name="search"
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={(e) => {
+            setSearchTerm(e.target.value);
+            setSliceCount(5);
+          }}
           id="SearchInput"
         />
         <button
@@ -96,6 +99,9 @@ const MobileSearchBar = ({
         loading={loading}
         noResult={noResult}
         suggestions={suggestions}
+        sliceCount={sliceCount}
+        onLoadMore={() => setSliceCount((prev) => prev + 5)}
+        hideLoadMore={sliceCount >= suggestions.length}
       />
     </>
   );

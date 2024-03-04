@@ -1,13 +1,18 @@
 import { Skeleton } from "@mui/material";
+import { useState } from "react";
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
+import Button from "@mui/material/Button";
 type SearchBarSuggestionsProps = {
   suggestions: object[];
   noResult: boolean;
   loading: boolean;
+  sliceCount: number;
+  onLoadMore: () => void;
+  hideLoadMore?: boolean;
 };
 
 
@@ -16,9 +21,12 @@ const SearchBarSuggestions = ({
   suggestions,
   noResult,
   loading,
+  sliceCount,
+  onLoadMore,
+  hideLoadMore
 }: SearchBarSuggestionsProps) => {
   return (
-    <div className="suggestions left-0 px-4 w-full absolute top-20 sm:grid sm:grid-cols-2 gap-x-10 md:grid-cols-3 items-start">
+    <div className="suggestions py-4 left-0 px-4 w-full absolute top-20 sm:grid sm:grid-cols-2 gap-x-10 md:grid-cols-3 items-start">
       {loading && (
         <>
           {Array(3)
@@ -37,9 +45,10 @@ const SearchBarSuggestions = ({
 
       {!loading &&
         suggestions.length > 0 &&
-        suggestions.map((suggestion: object, index: number) => (
+        suggestions.slice(0,sliceCount).map((suggestion: object, index: number) => (
           <SearcBarSuggestion suggestion={suggestion} key={index} />
         ))}
+      {suggestions.length > 5 && !hideLoadMore && <Button onClick={onLoadMore} sx={{gridColumn:"span 2"}} variant="outlined">Load More</Button> }
       {noResult && <div className="suggestion">No result found</div>}
     </div>
   );
