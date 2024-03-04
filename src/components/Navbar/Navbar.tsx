@@ -39,6 +39,19 @@ const Navbar: FC = () => {
     return () => unsubscribe();
   }, []);
 
+  useEffect(() => { 
+    const handleResize = () => {
+      const currentScreenWidth = window.innerWidth;
+      if(currentScreenWidth > 1023) {
+        setIsSearchMenuOpen(false);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => window.removeEventListener('resize', handleResize); 
+}, []); 
+
   const handleSearchMenuToggle = () => {
     setIsSearchMenuOpen((prev) => !prev);
     setIsMobileNavOpen(false);

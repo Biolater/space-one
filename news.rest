@@ -1,2 +1,1 @@
-GET https://api.nasa.gov/planetary/apod?api_key=WI7aonMPGTnDLh2FfCSCzqovqhfXV8XRcHAU8nUV
-
+https://images-assets.nasa.gov/video/Earth%20Views/collection.json
