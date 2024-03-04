@@ -27,6 +27,7 @@ const MobileSearchBar = ({
   const [suggestions, setSuggestions] = useState<object[]>([]);
   const [noResult, setNoResult] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  //@ts-ignore
   const [sliceCount, setSliceCount] = useState<number>(5);
   useEffect(() => {
     setNoResult(false);
@@ -96,7 +97,6 @@ const MobileSearchBar = ({
         noResult={noResult}
         suggestions={suggestions}
       />
-      <button>s</button>
     </>
   );
 };
