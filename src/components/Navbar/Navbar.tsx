@@ -115,12 +115,10 @@ const Navbar: FC = () => {
 
           {/* Desktop Navigation */}
           <ul className="navbar-nav hidden lg:flex gap-3">
-            <NavbarItem>Home</NavbarItem>
-            <NavbarItem>News</NavbarItem>
-            <NavbarItem>Articles</NavbarItem>
-            <NavbarItem>Forums</NavbarItem>
-            <NavbarItem>About Us</NavbarItem>
-            <NavbarItem>Contact</NavbarItem>
+            <NavbarItem to="/">Home</NavbarItem>
+            <NavbarItem to="#about">About Us</NavbarItem>
+            <NavbarItem to="#testimonials">Testimonials</NavbarItem>
+            <NavbarItem to="#news">News</NavbarItem>
           </ul>
 
           {/* Auth Section */}
@@ -196,12 +194,10 @@ const Navbar: FC = () => {
             : "opacity-0 pointer-events-none"
         } flex-col gap-4 w-full flex left-0 px-4 relative items-start`}
       >
-        <NavbarItem>Home</NavbarItem>
-        <NavbarItem onClick={handleMobileNavToggle}>News</NavbarItem>
-        <NavbarItem onClick={handleMobileNavToggle}>Articles</NavbarItem>
-        <NavbarItem onClick={handleMobileNavToggle}>Forums</NavbarItem>
-        <NavbarItem onClick={handleMobileNavToggle}>About Us</NavbarItem>
-        <NavbarItem onClick={handleMobileNavToggle}>Contact</NavbarItem>
+        <NavbarItem to="/">Home</NavbarItem>
+        <NavbarItem to="#about" onClick={handleMobileNavToggle}>About Us</NavbarItem>
+        <NavbarItem to="#testimonials" onClick={handleMobileNavToggle}>Testimonials</NavbarItem>
+        <NavbarItem to="#news" onClick={handleMobileNavToggle}>News</NavbarItem>
         {!isLoggedIn ? (
           <>
             <NavbarItem
@@ -253,11 +249,13 @@ const Navbar: FC = () => {
 interface NavbarItemProps {
   children: ReactNode;
   onClick?: () => void;
+  to?: string;
 }
 
-const NavbarItem: FC<NavbarItemProps> = ({ children, onClick }) => (
+const NavbarItem: FC<NavbarItemProps> = ({ children, onClick, to }) => (
   <li className="nav-item py-2 lg:py-0 font-primary">
     <a
+      href={to}
       onClick={onClick}
       className={`nav-link border-transparent cursor-pointer hover:border-b hover:border-white hover:border-dashed`}
     >
