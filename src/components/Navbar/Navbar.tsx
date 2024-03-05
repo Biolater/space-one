@@ -6,7 +6,7 @@ import { useNavigate } from "react-router";
 import { onAuthStateChanged } from "firebase/auth";
 // @ts-ignore
 import { auth } from "../../firebase";
-
+import { SearchBarProvider } from "../SearchBarContext";
 // Navbar Component
 const Navbar: FC = () => {
   const navigate = useNavigate();
@@ -125,7 +125,9 @@ const Navbar: FC = () => {
 
           {/* Auth Section */}
           <div className="navbar__auth hidden lg:flex items-center list-none gap-3">
-            <SearchBar />
+              <SearchBarProvider>
+                <SearchBar />
+              </SearchBarProvider>
             {isLoading ? (
               <div className="rays flex items-center justify-center"></div>
             ) : !isLoggedIn ? (
