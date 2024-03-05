@@ -6,6 +6,7 @@ type SearchBarContextType = {
 
 const SearchbarContext = createContext({
   searchQuery: "",
+  //@ts-ignore
   setSearchQuery: (query: string) => { }
 });
 const useSearchBarContext = () => useContext(SearchbarContext);

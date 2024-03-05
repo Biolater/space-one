@@ -13,7 +13,7 @@ type MobileSearchBarProps = {
 
 const SearchBar = () => {
   const rootContainer = document.getElementById("root") as HTMLDivElement;
-  const { setSearchQuery } = useSearchBarContext();
+  const { searchQuery ,setSearchQuery } = useSearchBarContext();
   return (
     <>
       <input
@@ -21,6 +21,7 @@ const SearchBar = () => {
         onChange={(e) => {
           setSearchQuery(e.target.value)
         }}
+        value={searchQuery}
         type="text"
         className="h-8 focus:outline-cyan-600 w-40 px-3 outline-none border-2 rounded border-gray-700 bg-transparent"
         id="search-input"

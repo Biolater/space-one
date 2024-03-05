@@ -203,3 +203,8 @@ body{
 .search__results{
     transition: all .3s;
 }
+
+.layer .swiper-wrapper{
+    display: flex;
+    align-items: center;
+}

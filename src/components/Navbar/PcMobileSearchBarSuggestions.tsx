@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
@@ -13,9 +13,14 @@ export default function PcMobileSearchBarSuggestions() {
   const [suggestions, setSuggestions] = useState<object[]>([]);
   const [noResult, setNoResult] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const { searchQuery } = useSearchBarContext();
+  const { searchQuery, setSearchQuery } = useSearchBarContext();
   const [isEnabled, setIsEnabled] = useState<boolean>(false);
   const [isEnabledLayer, setIsEnabledLayer] = useState<boolean>(false);
+  const layerRef = useRef(null);
+  const searchBarRef : SearchBarRef = useRef(null);
+  interface SearchBarRef { 
+    current: HTMLDivElement | null; // Adjust the element type as needed
+}
   if (searchQuery.length > 0) {
     setTimeout(() => {
       setIsEnabled(true);
@@ -65,11 +70,23 @@ export default function PcMobileSearchBarSuggestions() {
   }, [searchQuery]);
   return (
     <div
+      onClick={(e) =>{
+        e.stopPropagation();
+        if (!searchBarRef.current?.contains(e.target as Node)) { // Notice the '?.' for optional chaining 
+          setSearchQuery("");
+          setIsEnabled(false);
+          setTimeout(() => {
+              setIsEnabledLayer(false);
+          }, 100);
+      }
+      } }
+      ref={layerRef}
       className={`layer   transition-all fixed top-0 w-full h-screen ${
         isEnabledLayer ? "backdrop-blur-sm z-20" : "-z-20"
       }`}
     >
       <div
+        ref={searchBarRef}
         className={`search__results  top-[72px] w-full flex items-center  fixed  z-20 ${
           isEnabled ? `h-[440px]` : "h-0"
         } bg-primary`}
@@ -102,6 +119,11 @@ export default function PcMobileSearchBarSuggestions() {
                       <CardMedia
                         component="img"
                         height="140"
+                        sx={{ objectFit: "cover", objectPosition: "center", height: 200}}
+                        image={
+                          suggestion.links?.find((link: any) => link.rel === "preview")
+                            ?.href
+                        }
                         alt="green iguana"
                       />
                       <CardContent>
