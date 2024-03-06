@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 body{
-    background-color: #191919;
+    background-color: #191919!important;
     scroll-behavior: smooth;
 }
 
@@ -207,4 +207,10 @@ body{
 .layer .swiper-wrapper{
     display: flex;
     align-items: center;
+}
+
+.customDrawerPaper{
+    background-color: #191919!important;
+    color: #fff;
+    padding: 20px 15px;
 }

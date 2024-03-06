@@ -17,10 +17,10 @@ export default function PcMobileSearchBarSuggestions() {
   const [isEnabled, setIsEnabled] = useState<boolean>(false);
   const [isEnabledLayer, setIsEnabledLayer] = useState<boolean>(false);
   const layerRef = useRef(null);
-  const searchBarRef : SearchBarRef = useRef(null);
-  interface SearchBarRef { 
+  const searchBarRef: SearchBarRef = useRef(null);
+  interface SearchBarRef {
     current: HTMLDivElement | null; // Adjust the element type as needed
-}
+  }
   if (searchQuery.length > 0) {
     setTimeout(() => {
       setIsEnabled(true);
@@ -43,7 +43,6 @@ export default function PcMobileSearchBarSuggestions() {
         const response = await (
           await axios.get(endPoint)
         ).data.collection.items;
-        console.log(response);
         setSuggestions(response);
         if (response.length === 0) {
           setNoResult(true);
@@ -68,18 +67,35 @@ export default function PcMobileSearchBarSuggestions() {
     }
     return () => clearTimeout(timeOut);
   }, [searchQuery]);
+  useEffect(() => {
+    window.addEventListener("resize", () => {
+      const windowWidth = window.innerWidth;
+      if (windowWidth < 1024) {
+        setSearchQuery("");
+      }
+    });
+    return () => {
+      window.removeEventListener("resize", () => {
+        const windowWidth = window.innerWidth;
+        if (windowWidth < 1024) {
+          setSearchQuery("");
+        }
+      });
+    };
+  }, []);
   return (
     <div
-      onClick={(e) =>{
+      onClick={(e) => {
         e.stopPropagation();
-        if (!searchBarRef.current?.contains(e.target as Node)) { // Notice the '?.' for optional chaining 
+        if (!searchBarRef.current?.contains(e.target as Node)) {
+          // Notice the '?.' for optional chaining
           setSearchQuery("");
           setIsEnabled(false);
           setTimeout(() => {
-              setIsEnabledLayer(false);
+            setIsEnabledLayer(false);
           }, 100);
-      }
-      } }
+        }
+      }}
       ref={layerRef}
       className={`layer   transition-all fixed top-0 w-full h-screen ${
         isEnabledLayer ? "backdrop-blur-sm z-20" : "-z-20"
@@ -119,10 +135,15 @@ export default function PcMobileSearchBarSuggestions() {
                       <CardMedia
                         component="img"
                         height="140"
-                        sx={{ objectFit: "cover", objectPosition: "center", height: 200}}
+                        sx={{
+                          objectFit: "cover",
+                          objectPosition: "center",
+                          height: 200,
+                        }}
                         image={
-                          suggestion.links?.find((link: any) => link.rel === "preview")
-                            ?.href
+                          suggestion.links?.find(
+                            (link: any) => link.rel === "preview"
+                          )?.href
                         }
                         alt="green iguana"
                       />
