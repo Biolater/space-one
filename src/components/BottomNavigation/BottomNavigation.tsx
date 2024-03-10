@@ -19,8 +19,8 @@ import PeopleIcon from "@mui/icons-material/People";
 import { useState, useEffect } from "react";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { useNavigate } from "react-router";
-import Notifications from '@mui/icons-material/Notifications';
-import ExploreIcon from '@mui/icons-material/Explore';
+import Notifications from "@mui/icons-material/Notifications";
+import ExploreIcon from "@mui/icons-material/Explore";
 //@ts-ignore
 import { auth } from "../../firebase";
 import PersonSearch from "@mui/icons-material/PersonSearch";
@@ -42,12 +42,33 @@ export default function BottomAppBar() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [drawerVariant, setDrawerVariant] = useState("temporary");
   const handleDrawerOpen = () => {
     setIsDrawerOpen(true);
   };
   const handleDrawerClose = () => {
     setIsDrawerOpen(false);
   };
+
+  useEffect(() => {
+    let windowWidth = window.innerWidth;
+    if (windowWidth >= 768) {
+      setDrawerVariant("permanent");
+    } else {
+      setDrawerVariant("temporary");
+    }
+    function handleResize() {
+      windowWidth = window.innerWidth;
+      if (windowWidth >= 768) {
+        setDrawerVariant("permanent");
+      } else {
+        setDrawerVariant("temporary");
+      }
+    }
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const navigate = useNavigate();
   useEffect(() => {
     try {
@@ -81,7 +102,11 @@ export default function BottomAppBar() {
           <AppBar
             position="fixed"
             color="primary"
-            sx={{ top: "auto", bottom: 0 }}
+            sx={{
+              top: "auto",
+              bottom: 0,
+              display: drawerVariant === "permanent" ? "none" : "",
+            }}
           >
             <Toolbar>
               <IconButton
@@ -104,15 +129,19 @@ export default function BottomAppBar() {
             </Toolbar>
           </AppBar>
           <Drawer
-            sx={{ backgroundColor: "#191919", "& .MuiDrawer-paper" : {justifyContent: "space-between"}, }}
+            sx={{
+              backgroundColor: "#191919",
+              "& .MuiDrawer-paper": { justifyContent: "space-between" },
+            }}
             open={isDrawerOpen}
+            variant={drawerVariant as "temporary" | "permanent" | "persistent"}
             onClose={() => handleDrawerClose()}
             PaperProps={{
               className: "customDrawerPaper",
             }}
           >
             <List>
-            <Tooltip
+              <Tooltip
                 TransitionComponent={Zoom}
                 title="Explore"
                 placement="right"

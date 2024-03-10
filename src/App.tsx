@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { FaArrowUp } from "react-icons/fa6";
+import Messages from "./components/Messages/Messages.js";
 // @ts-ignore
 import {
   Navbar,
@@ -62,7 +63,10 @@ const App: React.FC = () => {
       ) : (
         <div>
           {user || localStorage.getItem("userLoggedin") === "true" ? (
-            <BottomAppBar />
+            <>
+              <Messages />
+              <BottomAppBar />
+            </>
           ) : (
             <>
               <button
