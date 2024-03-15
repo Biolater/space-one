@@ -17,11 +17,13 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import { List, ListItem, ListItemButton, ListItemIcon } from "@mui/material";
 import PeopleIcon from "@mui/icons-material/People";
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { onAuthStateChanged, signOut } from "firebase/auth";
+import AddMessageModal from "./AddMessageModal";
 import { useNavigate } from "react-router";
 import Notifications from "@mui/icons-material/Notifications";
 import ExploreIcon from "@mui/icons-material/Explore";
-//@ts-ignore
+//@ts-expect-error expected
 import { auth } from "../../firebase";
 import PersonSearch from "@mui/icons-material/PersonSearch";
 const StyledFab = styled(Fab)({
@@ -43,13 +45,16 @@ export default function BottomAppBar() {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [drawerVariant, setDrawerVariant] = useState("temporary");
+  const [isMessageModalOpen, setIsMessageModalOpen] = useState<boolean>(false);
   const handleDrawerOpen = () => {
     setIsDrawerOpen(true);
   };
   const handleDrawerClose = () => {
     setIsDrawerOpen(false);
   };
-
+  const handleMessageModalState = () => {
+    setIsMessageModalOpen(prevState => !prevState);
+  }
   useEffect(() => {
     let windowWidth = window.innerWidth;
     if (windowWidth >= 768) {
@@ -85,7 +90,7 @@ export default function BottomAppBar() {
     } finally {
       setIsLoading(false);
     }
-  }, [auth, setUser, isLoading]);
+  }, [isLoading]);
 
   const handleLogOut = () => {
     signOut(auth).then(() => {
@@ -95,6 +100,10 @@ export default function BottomAppBar() {
   };
   return (
     <>
+      {createPortal(
+        <AddMessageModal isModalOpen={isMessageModalOpen} />,
+        document.body
+      )}
       {isLoading && <p>Loading...</p>}
       {!isLoading && (
         <>
@@ -116,7 +125,7 @@ export default function BottomAppBar() {
               >
                 <MenuIcon />
               </IconButton>
-              <StyledFab color="secondary" aria-label="add">
+              <StyledFab onClick={handleMessageModalState} color="secondary" aria-label="add">
                 <AddIcon />
               </StyledFab>
               <Box sx={{ flexGrow: 1 }} />

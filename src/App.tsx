@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { FaArrowUp } from "react-icons/fa6";
 import Messages from "./components/Messages/Messages.js";
-// @ts-ignore
 import {
   Navbar,
   Hero,
@@ -9,18 +8,17 @@ import {
   SpaceNews,
   Testimonials,
   Footer,
-  // @ts-ignore
+// @ts-expect-error to avoid decloration error
 } from "./utils/Components.jsx";
-import { onAuthStateChanged } from "firebase/auth";
-// @ts-ignore
+import { onAuthStateChanged, User } from "firebase/auth";
+// @ts-expect-error to avoid decloration error
 import { auth } from "./firebase";
 import BottomAppBar from "./components/BottomNavigation/BottomNavigation.js";
-// @ts-ignore
 const App: React.FC = () => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user: any) => {
+    const unsubscribe = onAuthStateChanged(auth, (user: User | null) => {
       if (user && localStorage.getItem("justLoggedIn") === "true") {
         localStorage.setItem("userLoggedin", "true");
         alert("User is logged in");
@@ -33,7 +31,7 @@ const App: React.FC = () => {
     return () => {
       unsubscribe();
     };
-  }, [auth]);
+  }, []);
   useEffect(() => {
     const handleScroll = () => {
       const scroll = window.scrollY;
