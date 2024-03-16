@@ -16,7 +16,7 @@ import Zoom from "@mui/material/Zoom";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { List, ListItem, ListItemButton, ListItemIcon } from "@mui/material";
 import PeopleIcon from "@mui/icons-material/People";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import AddMessageModal from "./AddMessageModal";
@@ -46,6 +46,7 @@ export default function BottomAppBar() {
   const [isLoading, setIsLoading] = useState(true);
   const [drawerVariant, setDrawerVariant] = useState("temporary");
   const [isMessageModalOpen, setIsMessageModalOpen] = useState<boolean>(false);
+  const messageModalRef = useRef(null);
   const handleDrawerOpen = () => {
     setIsDrawerOpen(true);
   };
@@ -53,8 +54,8 @@ export default function BottomAppBar() {
     setIsDrawerOpen(false);
   };
   const handleMessageModalState = () => {
-    setIsMessageModalOpen(prevState => !prevState);
-  }
+    setIsMessageModalOpen((prevState) => !prevState);
+  };
   useEffect(() => {
     let windowWidth = window.innerWidth;
     if (windowWidth >= 768) {
@@ -70,10 +71,22 @@ export default function BottomAppBar() {
         setDrawerVariant("temporary");
       }
     }
+    function handleModalOutsideClick(event: Event) {
+      if (event.target == messageModalRef.current) {
+        setIsMessageModalOpen(false);
+      }
+    }
     window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
+    if (isMessageModalOpen) {
+      document.addEventListener("click", handleModalOutsideClick);
+    }
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      if (isMessageModalOpen) {
+        document.removeEventListener("click", handleModalOutsideClick);
+      }
+    };
+  }, [isMessageModalOpen]);
   const navigate = useNavigate();
   useEffect(() => {
     try {
@@ -101,7 +114,10 @@ export default function BottomAppBar() {
   return (
     <>
       {createPortal(
-        <AddMessageModal isModalOpen={isMessageModalOpen} />,
+        <AddMessageModal
+          modalRef={messageModalRef}
+          isModalOpen={isMessageModalOpen}
+        />,
         document.body
       )}
       {isLoading && <p>Loading...</p>}
@@ -125,8 +141,17 @@ export default function BottomAppBar() {
               >
                 <MenuIcon />
               </IconButton>
-              <StyledFab onClick={handleMessageModalState} color="secondary" aria-label="add">
-                <AddIcon />
+              <StyledFab
+                onClick={handleMessageModalState}
+                color="secondary"
+                aria-label="add"
+              >
+                <AddIcon
+                  sx={{
+                    transition: "all 300ms",
+                    transform: `${isMessageModalOpen && "rotate(135deg)"}`,
+                  }}
+                />
               </StyledFab>
               <Box sx={{ flexGrow: 1 }} />
               <IconButton color="inherit">
