@@ -9,6 +9,7 @@ type MessageModalType = {
 };
 
 const AddMessageModal = ({ isModalOpen, modalRef }: MessageModalType) => {
+  const [loading, setIsLoading] = useState<boolean>(false)
   const [message, setMessage] = useState<string>("");
   const [user, setUser] = useState<User | null>(null);
   const db = getFirestore(); // Initialize Firestore
@@ -28,6 +29,7 @@ const AddMessageModal = ({ isModalOpen, modalRef }: MessageModalType) => {
   }, []);
   const handleMessageAdd = async () => {
     if (message.length === 0 || !user) return; // Validation
+    setIsLoading(true);
     try {
       const messageCollectionRef = collection(db, "messages");
       await addDoc(messageCollectionRef, {
@@ -40,6 +42,8 @@ const AddMessageModal = ({ isModalOpen, modalRef }: MessageModalType) => {
       setMessage('');
     } catch (err) {
       console.error(err);
+    }finally{
+      setIsLoading(false);
     }
   };
 
@@ -68,7 +72,7 @@ const AddMessageModal = ({ isModalOpen, modalRef }: MessageModalType) => {
               type="button"
               className="py-3 mt-2 px-4 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-gray-800 text-white hover:bg-gray-900 disabled:opacity-50 disabled:pointer-events-none "
             >
-              Send
+              {loading ? "Sending...": "Send"}
             </button>
           )}
         </div>
