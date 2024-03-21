@@ -200,6 +200,29 @@ export default function BottomAppBar() {
               </Tooltip>
               <Tooltip
                 TransitionComponent={Zoom}
+                title="Add Message"
+                placement="right"
+              >
+                <ListItem disablePadding>
+                  <ListItemButton
+                    onClick={() => setIsMessageModalOpen(prev => !prev)}
+                    sx={{
+                      width: "60px",
+                      height: "60px",
+                      borderRadius: "50%",
+                      color: "white",
+                      justifyContent: "center",
+                      "&:hover": { backgroundColor: "#333" },
+                    }}
+                  >
+                    <ListItemIcon sx={{ minWidth: "unset", display: "block" }}>
+                      <AddIcon sx={{ color: "#fff" }} />
+                    </ListItemIcon>
+                  </ListItemButton>
+                </ListItem>
+              </Tooltip>
+              <Tooltip
+                TransitionComponent={Zoom}
                 title="Notifications"
                 placement="right"
               >

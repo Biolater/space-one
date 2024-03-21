@@ -1,7 +1,12 @@
 import { RefObject, useEffect, useState } from "react";
 import { User } from "firebase/auth";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { getFirestore, collection, addDoc, serverTimestamp } from "firebase/firestore"; 
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  serverTimestamp,
+} from "firebase/firestore";
 
 type MessageModalType = {
   isModalOpen: boolean;
@@ -9,13 +14,13 @@ type MessageModalType = {
 };
 
 const AddMessageModal = ({ isModalOpen, modalRef }: MessageModalType) => {
-  const [loading, setIsLoading] = useState<boolean>(false)
+  const [loading, setIsLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
   const [user, setUser] = useState<User | null>(null);
   const db = getFirestore(); // Initialize Firestore
   const handleMessage = (event: React.ChangeEvent<HTMLInputElement>) => {
     setMessage(event.target.value);
-  }
+  };
   useEffect(() => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -25,7 +30,7 @@ const AddMessageModal = ({ isModalOpen, modalRef }: MessageModalType) => {
         setUser(null);
       }
     });
-    return unsubscribe; 
+    return unsubscribe;
   }, []);
   const handleMessageAdd = async () => {
     if (message.length === 0 || !user) return; // Validation
@@ -39,10 +44,10 @@ const AddMessageModal = ({ isModalOpen, modalRef }: MessageModalType) => {
         userAvatar: user?.photoURL,
         createdAt: serverTimestamp(),
       });
-      setMessage('');
+      setMessage("");
     } catch (err) {
       console.error(err);
-    }finally{
+    } finally {
       setIsLoading(false);
     }
   };
@@ -50,13 +55,13 @@ const AddMessageModal = ({ isModalOpen, modalRef }: MessageModalType) => {
   return (
     <div
       ref={modalRef}
-      className={`messageModal transition-all duration-300 fixed top-0 modal-overlay w-full h-screen bg-[rgba(0,0,0,0.5)] flex items-center justify-center ${
+      className={`messageModal md:ps-[90px]  transition-all duration-300 fixed top-0 modal-overlay w-full h-screen bg-[rgba(0,0,0,0.5)] flex items-center justify-center ${
         isModalOpen
           ? "opacity-1 pointer-events-auto"
           : "opacity-0 pointer-events-none"
       }  `}
     >
-      <div className="container px-4 mx-auto">
+      <div className="container md:max-w-[600px] px-4 mx-auto">
         <div className="messageModal__container flex flex-col justify-center items-center min-w-full  p-3 bg-[#fff] rounded-2xl">
           <p className="mb-2 font-semibold text-xl">What is on your mind ?</p>
           <input
@@ -72,7 +77,7 @@ const AddMessageModal = ({ isModalOpen, modalRef }: MessageModalType) => {
               type="button"
               className="py-3 mt-2 px-4 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-gray-800 text-white hover:bg-gray-900 disabled:opacity-50 disabled:pointer-events-none "
             >
-              {loading ? "Sending...": "Send"}
+              {loading ? "Sending..." : "Send"}
             </button>
           )}
         </div>

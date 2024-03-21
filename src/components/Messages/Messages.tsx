@@ -58,7 +58,7 @@ const Messages = () => {
   }, []);
 
   return (
-    <div className="messages md:ps-[90px] max-h-[calc(100vh-56px)] overflow-y-auto">
+    <div className="messages md:ps-[90px] max-h-[calc(100vh-56px)] md:max-h-[100%] overflow-y-auto">
       <div className="container mx-auto px-4 py-6">
         <h1 className="text-2xl text-white font-semibold mb-4">Messages</h1>
         <div className="grid gap-6">
