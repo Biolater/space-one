@@ -11,7 +11,7 @@ const MessageCard = ({ message, avatar, time, username }: Message) => {
   return (
     <div className="message-item p-3 text-white">
       <div className="flex items-center gap-4">
-        <Link to={username}>
+        <Link to={`/profile/${username}`}>
           <img
             src={avatar}
             alt="avatar"

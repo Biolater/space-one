@@ -25,7 +25,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           <Route path="/signup" element={<Signup />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/friends" element={<Friends />} />
-          <Route path="/:username" element={<ProfilePage />} /> 
+          <Route path="/profile/:username" element={<ProfilePage />} /> 
         </Routes>
       </Router>
     </ThemeProvider>
