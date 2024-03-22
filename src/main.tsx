@@ -8,7 +8,7 @@ import Login from './components/Navbar/Login.jsx';
 import Signup from './components/Navbar/Signup.tsx';
 import Dashboard from './components/Dashboard/Dashboard.tsx';
 import Friends from './components/Friends/Friends.tsx';
-
+import ProfilePage from './components/ProfilePage/ProfilePage.tsx';
 const theme = createTheme({
   typography: {
     fontFamily: 'Montserrat, sans-serif',
@@ -25,6 +25,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           <Route path="/signup" element={<Signup />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/friends" element={<Friends />} />
+          <Route path="/:username" element={<ProfilePage />} /> 
         </Routes>
       </Router>
     </ThemeProvider>
