@@ -1,6 +1,12 @@
 import { useParams } from "react-router";
 import { useState, useEffect } from "react";
-import { getFirestore, getDocs, collection, where, query } from "firebase/firestore";
+import {
+  getFirestore,
+  getDocs,
+  collection,
+  where,
+  query,
+} from "firebase/firestore";
 
 export default function ProfilePage() {
   const { username } = useParams();
@@ -9,7 +15,8 @@ export default function ProfilePage() {
     email: string;
     name: string;
     uid: string;
-    password: string; // Consider not storing password in clear text
+    password: string;
+    displayImage: string;
   };
 
   const [userData, setUserData] = useState<user | null>(null);
@@ -38,23 +45,25 @@ export default function ProfilePage() {
     };
 
     fetchData();
-  }, [username]);
+  }, [username, userData]);
 
   return (
     <div>
       {userData ? (
-        <div className="container px-4 mx-auto py-6 text-center"> 
+        <div className="container px-4 mx-auto py-6 text-center">
           {/* Display user data */}
-          <div className="profileImg">
-            
+          <div className="profileImg w-[100px] mx-auto h-[100px] object-cover">
+            <img className="max-w-full max-h-full w-full h-full" src={userData?.displayImage} alt="Profile" />
           </div>
-          <h1 className="text-3xl font-semibold text-white text-center">{userData.name}</h1> 
+          <h1 className="text-3xl font-semibold text-white text-center">
+            {userData.name}
+          </h1>
           <p>{userData.bio}</p>
           {/* etc. */}
         </div>
       ) : (
         <p>Loading...</p>
-      )} 
+      )}
     </div>
   );
 }

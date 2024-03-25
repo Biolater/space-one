@@ -1,29 +1,36 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-// @ts-ignore
+// @ts-expect-error avoid decloration error
 import { auth, colRef } from "../../firebase";
-// @ts-ignore
 import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
   updateProfile,
 } from "firebase/auth";
-// @ts-ignore
+// @ts-expect-error avoid decloration error
 import { SpaceImage2 } from "../../utils/Svg.jsx";
 import { setDoc, doc } from "firebase/firestore";
+type User = {
+  // Add any additional properties you need here
+  photoURL?: string;
+}
 const SignUp = () => {
+  const [loggedinUser, setLoggedinUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  
   useEffect(() => {
     document.body.style.overflow = "auto";
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         navigate("/");
+        setLoggedinUser(user);
         if (localStorage.getItem("justLoggedIn") !== "true") {
           localStorage.setItem("justLoggedIn", "true");
         }
       } else {
         navigate("/signup");
+        setLoggedinUser({});
       }
     });
 
@@ -36,7 +43,7 @@ const SignUp = () => {
     name: "",
   });
   const [errorMessage, setErrorMessage] = useState("");
-
+  const defaultImage = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
   const signUp = async (e: any) => {
     e.preventDefault();
     setLoading(true);
@@ -56,6 +63,7 @@ const SignUp = () => {
         userPassword: user.password,
         uid: userCredential.user.uid,
         bio: "Default bio",
+        displayImage: loggedinUser?.photoURL || defaultImage, // Use default image if no image is selected
       });
       await updateProfile(userCredential.user, { displayName: user.name });
 
