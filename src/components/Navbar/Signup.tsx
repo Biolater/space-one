@@ -24,7 +24,7 @@ const SignUp = () => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         navigate("/");
-        setLoggedinUser(user);
+        setLoggedinUser(user as User);
         if (localStorage.getItem("justLoggedIn") !== "true") {
           localStorage.setItem("justLoggedIn", "true");
         }
