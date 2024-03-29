@@ -7,10 +7,10 @@ import {
   getDownloadURL,
 } from "firebase/storage";
 import { getAuth, onAuthStateChanged, updateProfile } from "firebase/auth";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, getFirestore, updateDoc } from "firebase/firestore";
 
 // Import the Firebase app, auth, and db
-// @ts-ignore
+// @ts-expect-error expected
 import { auth, db, colRef } from "../../firebase";
 import { FaEdit } from "react-icons/fa";
 import { motion } from "framer-motion";
@@ -84,19 +84,18 @@ export function BackgroundBeamsDemo() {
       setError("");
       const auth = getAuth();
       if (auth.currentUser) {
-        try{
-          const userDocRef = doc(db, 'users', user?.uid);
+        try {
+          const userDocRef = doc(db, "users", user?.uid);
           await updateDoc(userDocRef, {
             name: changeDetails.displayName,
-          })
-        }catch(err:any){
+          });
+        } catch (err: any) {
           setError(err.message);
         }
         updateProfile(auth.currentUser, {
           ...user,
           displayName: changeDetails.displayName,
         })
-        
           .then(() => {
             setUserNameIsEditing(false);
             setMessage("Account updated successfully");
@@ -154,6 +153,13 @@ export function BackgroundBeamsDemo() {
                 photoURL: downloadURL,
               })
                 .then(() => {
+                  const firestore = getFirestore();
+                  const userDocRef = doc(firestore, "users", user?.uid);
+                  updateDoc(userDocRef, {
+                    displayImage: downloadURL,
+                  });
+                })
+                .then(() => {
                   setMessage("Account updated successfully");
                   setError("Account updated successfully");
                   setLoading(false);
@@ -182,7 +188,7 @@ export function BackgroundBeamsDemo() {
     if (changeDetails.bio.trim().length < 1) {
       setError("Please enter a bio");
       setBioFail((prev) => !prev);
-    }else{
+    } else {
       const userDocRef = doc(db, "users", user?.uid);
       try {
         await updateDoc(userDocRef, {
@@ -202,7 +208,6 @@ export function BackgroundBeamsDemo() {
       }
     }
   };
-
 
   const fetchBio = async () => {
     const userDocRef = doc(db, "users", user?.uid);

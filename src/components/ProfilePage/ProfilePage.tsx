@@ -52,13 +52,17 @@ export default function ProfilePage() {
       {userData ? (
         <div className="container px-4 mx-auto py-6 text-center">
           {/* Display user data */}
-          <div className="profileImg w-[100px] mx-auto h-[100px] object-cover">
-            <img className="max-w-full max-h-full w-full h-full" src={userData?.displayImage} alt="Profile" />
+          <div className="profileImg w-[100px] mx-auto h-[100px]">
+            <img
+              className="max-w-full rounded-full max-h-full w-full object-cover h-full"
+              src={userData?.displayImage}
+              alt="Profile"
+            />
           </div>
           <h1 className="text-3xl font-semibold text-white text-center">
             {userData.name}
           </h1>
-          <p>{userData.bio}</p>
+          <p className="text-lg text-white">{userData.bio}</p>
           {/* etc. */}
         </div>
       ) : (
