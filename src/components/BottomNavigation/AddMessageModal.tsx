@@ -57,7 +57,7 @@ const AddMessageModal = ({ isModalOpen, modalRef }: MessageModalType) => {
   return (
     <div
       ref={modalRef}
-      className={`messageModal md:ps-[90px]  transition-all duration-300 fixed top-0 modal-overlay w-full h-screen bg-[rgba(0,0,0,0.5)] flex items-center justify-center ${
+      className={`messageModal md:ps-[90px]  transition-all duration-300 fixed top-0 modal-overlay w-full h-screen bg-[rgba(0,0,0,0.6)] flex items-center justify-center ${
         isModalOpen
           ? "opacity-1 pointer-events-auto"
           : "opacity-0 pointer-events-none"
